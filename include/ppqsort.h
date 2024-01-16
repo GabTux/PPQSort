@@ -11,8 +11,8 @@
 
 #include "ppqsort/parameters.h"
 #include "ppqsort/mainloop.h"
-#include "ppqsort/parallel/mainloop_par.h"
-#include "ppqsort/parallel/partition_par.h"
+#include "ppqsort/parallel/openmp/mainloop_par.h"
+#include "ppqsort/parallel/openmp/partition_par.h"
 
 namespace ppqsort::impl {
     template<typename T>
