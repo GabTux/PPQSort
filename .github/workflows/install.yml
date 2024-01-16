@@ -28,6 +28,7 @@ jobs:
 
       - name: build and install library
         run: |
+          sudo apt update && sudo apt install -y libomp5 libomp-dev
           cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
           sudo cmake --build build --target install
           rm -rf build
