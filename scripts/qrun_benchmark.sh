@@ -11,7 +11,7 @@ fi
 
 set -e
 
-. scripts/run.sh --source-only
+. scripts/build.sh --source-only
 build_benchmark
 
 cd build/benchmark

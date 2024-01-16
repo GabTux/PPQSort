@@ -7,25 +7,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-function build_standalone() {
-    cmake -S standalone -B build/standalone -DCMAKE_BUILD_TYPE=Release
-    cmake --build build/standalone
-}
-
-function build_test() {
-    cmake -S test -B build/test -DENABLE_COMPILER_WARNINGS=ON
-    cmake --build build/test -j"$(nproc)"
-}
-
-function build_benchmark() {
-    cmake -S benchmark -B build/benchmark -DCMAKE_BUILD_TYPE=Release
-    cmake --build build/benchmark --config Release -j"$(nproc)"
-}
-
-function build_all() {
-    cmake -S all -B build
-    cmake --build build -j"$(nproc)"
-}
+. scripts/build.sh --source-only
 
 function main() {
     if [ "$1" == "all" ]; then
@@ -49,6 +31,4 @@ function main() {
     fi
 }
 
-if [ "${1}" != "--source-only" ]; then
-    main "${@}"
-fi
+main "${@}"
