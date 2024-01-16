@@ -84,6 +84,7 @@ size_t NUM_COMP = 0;
 namespace ppqsort::parameters {
     constexpr int insertion_threshold_primitive = 32;
     constexpr int insertion_threshold = 12;
+    constexpr int partial_insertion_threshold = 8;
     constexpr int median_threshold = 128;
     constexpr int partition_ratio = 8;
     constexpr int cacheline_size = 64;
@@ -95,12 +96,14 @@ namespace ppqsort::parameters {
 }
 
 namespace ppqsort::execution {
-    using std::execution::seq;
-    using std::execution::par;
 
+    class sequenced_policy {};
+    class parallel_policy {};
     class sequenced_policy_force_branchless {};
     class parallel_policy_force_branchless {};
 
+    inline constexpr sequenced_policy seq{};
+    inline constexpr parallel_policy par{};
     inline constexpr sequenced_policy_force_branchless seq_force_branchless{};
     inline constexpr parallel_policy_force_branchless par_force_branchless{};
 

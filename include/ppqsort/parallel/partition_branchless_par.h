@@ -2,8 +2,9 @@
 
 namespace ppqsort::impl::par {
 
-    template<class RandomIt, typename Offset, class Compare, typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+    template<class RandomIt, typename Offset, class Compare,
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void solve_left_block(const RandomIt & g_begin,
                                  diff_t & t_left, diff_t & t_left_start, diff_t & t_left_end,
                                  Offset * t_offsets_l, diff_t & t_count_l, T & g_pivot, Compare comp) {
@@ -16,8 +17,9 @@ namespace ppqsort::impl::par {
         populate_block<side::left>(g_begin, t_left, g_pivot, t_offsets_l, t_count_l, comp, elem_rem_l);
     }
 
-    template<class RandomIt, typename Offset, class Compare, typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+    template<class RandomIt, typename Offset, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type,
+             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void solve_right_block(const RandomIt & g_begin,
                                   diff_t & t_right, diff_t & t_right_start, diff_t & t_right_end,
                                  Offset * t_offsets_r, diff_t & t_count_r, T & g_pivot, Compare comp) {
@@ -31,8 +33,9 @@ namespace ppqsort::impl::par {
     }
 
 
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type,
+             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline std::pair<RandomIt, bool> partition_right_branchless_par(const RandomIt g_begin,
                                                                     const RandomIt g_end, Compare comp,
                                                                     const int thread_count)
@@ -90,8 +93,8 @@ namespace ppqsort::impl::par {
             diff_t t_size = 0;
             bool t_already_partitioned = true;
 
-            alignas(parameters::cacheline_size) unsigned short t_offsets_l[parameters::buffer_size];
-            alignas(parameters::cacheline_size) unsigned short t_offsets_r[parameters::buffer_size];
+            alignas(parameters::cacheline_size) unsigned short t_offsets_l[parameters::buffer_size] = {0};
+            alignas(parameters::cacheline_size) unsigned short t_offsets_r[parameters::buffer_size] = {0};
 
             static_assert(std::numeric_limits<std::remove_all_extents<decltype(t_offsets_l)>::type>::max() >
                           parameters::buffer_size,

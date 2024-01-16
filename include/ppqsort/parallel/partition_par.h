@@ -132,8 +132,8 @@ namespace ppqsort::impl::par {
 
 
     template <typename RandomIt, typename Compare,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline std::pair<RandomIt, bool> _partition_to_right_par(const RandomIt g_begin,
                                                              const RandomIt g_end,
                                                              Compare comp,

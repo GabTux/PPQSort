@@ -13,7 +13,7 @@ namespace ppqsort::impl {
      * @param comp
      * @return Iterator to pivot
      */
-    template <typename RandomIt, typename Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template <typename RandomIt, typename Compare, typename T = typename std::iterator_traits<RandomIt>::value_type>
     RandomIt _partition_to_left(RandomIt begin, RandomIt end, Compare comp) {
         T pivot = std::move(*begin);
         RandomIt first = begin;
@@ -47,7 +47,7 @@ namespace ppqsort::impl {
         return pivotPos;
     }
 
-    template <typename RandomIt, typename Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template <typename RandomIt, typename Compare, typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline std::pair<RandomIt, bool> _partition_to_right(RandomIt begin, RandomIt end, Compare comp) {
         T pivot = std::move(*begin);
         RandomIt first = begin;

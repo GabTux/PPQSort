@@ -1,11 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <ranges>
+
 #include "parameters.h"
 #include "partition.h"
 #include "partition_branchless.h"
 #include "sorts.h"
-#include "bitset_partition.h"
 
 namespace ppqsort::impl {
     template <class T> struct is_default_comparator : std::false_type {};
@@ -17,7 +18,7 @@ namespace ppqsort::impl {
 
     template <typename T, class Compare>
     using use_branchless = std::integral_constant<bool, std::is_arithmetic_v<T> &&
-                                                        is_default_comparator<typename std::decay_t<Compare>>::value>;
+                                                        is_default_comparator<std::decay_t<Compare>>::value>;
 
     template <typename RandomIt, typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void _deterministic_shuffle(RandomIt begin, RandomIt end, const diff_t l_size, const diff_t r_size,
@@ -48,7 +49,7 @@ namespace ppqsort::impl {
     }
 
     template <bool branchless, typename RandomIt, class Compare,
-              typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+              typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void median_of_three_medians(const RandomIt & begin, const RandomIt & end,
                                         const diff_t & size, Compare comp) {
         RandomIt mid = begin + size/2;
@@ -66,7 +67,8 @@ namespace ppqsort::impl {
         std::iter_swap(begin, mid);
     }
 
-    template <typename RandomIt, class Compare, typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+    template <typename RandomIt, class Compare,
+              typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void median_of_five_medians(const RandomIt & begin, const RandomIt & end,
                                        const diff_t & size, Compare comp) {
         RandomIt x2 = begin + size/4;
@@ -82,7 +84,7 @@ namespace ppqsort::impl {
     }
 
     template <bool branchless, typename RandomIt, class Compare,
-              typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+              typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void choose_pivot(const RandomIt & begin, const RandomIt & end, const diff_t & size, Compare comp) {
         if (size > parameters::median_threshold) {
             median_of_three_medians<branchless>(begin, end, size, comp);
@@ -96,7 +98,7 @@ namespace ppqsort::impl {
     }
 
     template <typename RandomIt, typename Compare, bool branchless,
-            typename T = std::iterator_traits<RandomIt>::value_type,
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void seq_loop(RandomIt begin, RandomIt end, Compare comp, diff_t bad_allowed, bool leftmost = true) {
         constexpr const int insertion_threshold = branchless ?
@@ -126,7 +128,7 @@ namespace ppqsort::impl {
             auto part_result = branchless ? partition_right_branchless(begin, end, comp)
                                           : _partition_to_right(begin, end, comp);
             RandomIt pivot_pos = part_result.first;
-            bool already_partitioned = part_result.second;
+            const bool already_partitioned = part_result.second;
 
             diff_t l_size = pivot_pos - begin;
             diff_t r_size = end - (pivot_pos + 1);
@@ -149,7 +151,7 @@ namespace ppqsort::impl {
                 }
             }
 
-            bool highly_unbalanced = l_size < (size / parameters::partition_ratio) ||
+            const bool highly_unbalanced = l_size < (size / parameters::partition_ratio) ||
                                      r_size < (size / parameters::partition_ratio);
 
             if (highly_unbalanced) {

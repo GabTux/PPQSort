@@ -4,7 +4,8 @@ namespace ppqsort::impl {
 
     // 8 instructions, no jumps, only conditional moves, 1 compare
     // https://godbolt.org/z/o3sTjeGnv
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_2_branchless(RandomIt a, RandomIt b, Compare comp) {
         bool res = comp(*a, *b);
         T tmp = res ? *a : *b;
@@ -13,7 +14,8 @@ namespace ppqsort::impl {
     }
 
     // sorts correctly a, b, c if b and c are already sorted, 2 compares
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_3_partial_branchless(RandomIt a, RandomIt b, RandomIt c, Compare comp) {
         bool res = comp(*c, *a);
         T tmp = res ? *c : *a;
@@ -24,14 +26,16 @@ namespace ppqsort::impl {
     }
 
     // 17 instructions, no jumps, 3 compares
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_3_branchless(RandomIt a, RandomIt b, RandomIt c, Compare comp) {
         sort_2_branchless(b, c, comp);
         sort_3_partial_branchless(a, b, c, comp);
     }
 
     // 43 instructions, no jumps, 9 compares
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_5_branchless(RandomIt x1, RandomIt x2, RandomIt x3, RandomIt x4, RandomIt x5, Compare comp) {
         sort_2_branchless(x1, x2, comp);
         sort_2_branchless(x4, x5, comp);
@@ -73,7 +77,8 @@ namespace ppqsort::impl {
     }
 
     // Sort [begin, end) using comp by insertion sort
-    template<typename RandomIt, typename Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<typename RandomIt, typename Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void _insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return;
@@ -101,7 +106,8 @@ namespace ppqsort::impl {
     // Sort [begin, end) using comp by insertion sort
     // Assumes that on position (first - 1) is an element
     // that is lower or equal to all elements in input range
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void _insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return;
@@ -129,12 +135,13 @@ namespace ppqsort::impl {
 
     // Try to sort [begin, end) using comp by insertion sort
     // if more than swap_limit swaps are made, abort sorting
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline bool _partial_insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return true;
 
-        const unsigned int swap_limit = 8;
+        constexpr unsigned int swap_limit = parameters::partial_insertion_threshold;
         std::size_t count = 0;
 
         for (RandomIt it = begin + 1; it != end; ++it) {
@@ -156,12 +163,13 @@ namespace ppqsort::impl {
         return true;
     }
 
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline bool _partial_insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return true;
 
-        const unsigned int swap_limit = 8;
+        constexpr unsigned int swap_limit = parameters::partial_insertion_threshold;
         std::size_t count = 0;
 
         for (RandomIt it = begin + 1; it != end; ++it) {

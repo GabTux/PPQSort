@@ -7,7 +7,7 @@
 namespace ppqsort::impl::par {
     template <typename RandomIt, typename Compare,
               bool branchless,
-              typename T = std::iterator_traits<RandomIt>::value_type,
+              typename T = typename std::iterator_traits<RandomIt>::value_type,
               typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void par_loop(RandomIt begin, RandomIt end, Compare comp,
                          diff_t bad_allowed, diff_t seq_thr, int threads,

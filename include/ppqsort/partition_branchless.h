@@ -3,8 +3,8 @@
 namespace ppqsort::impl {
 
     template<class RandomIt, typename Offset,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void swap_offsets_core(RandomIt first, RandomIt last,
                                   Offset* offsets_l, Offset* offsets_r,
                                   diff_t & num, bool swap)
@@ -31,8 +31,8 @@ namespace ppqsort::impl {
     }
 
     template<class RandomIt, typename Offset,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline diff_t swap_offsets(RandomIt first, RandomIt last,
                                Offset* offsets_l, Offset* offsets_r,
                                diff_t & num_l, diff_t & num_r) {
@@ -44,8 +44,8 @@ namespace ppqsort::impl {
     }
 
     template<class RandomIt, typename Offset,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline diff_t swap_offsets(RandomIt first, RandomIt last,
                                Offset* offsets_l, Offset* offsets_r,
                                diff_t & num_l, diff_t & num_r,
@@ -60,8 +60,8 @@ namespace ppqsort::impl {
 
 
     template <side s, typename RandomIt, typename Offset, class Compare,
-              typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+              typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void populate_block(RandomIt & begin, diff_t & offset, T pivot, Offset* offsets, diff_t& count,
                                Compare comp, const int & block_size) {
         for (int i = 0; i < block_size; ++i) {
@@ -74,8 +74,8 @@ namespace ppqsort::impl {
     }
 
     template <side s, typename RandomIt, typename Offset, class Compare,
-              typename T = std::iterator_traits<RandomIt>::value_type,
-              typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+              typename T = typename std::iterator_traits<RandomIt>::value_type,
+              typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void populate_block(RandomIt & it, T & pivot, Offset* offsets, diff_t& count,
                                Compare comp, const int & block_size) {
         for (int i = 0; i < block_size; ++i) {
@@ -88,8 +88,8 @@ namespace ppqsort::impl {
     }
 
     template <typename RandomIt, typename Offset, class Compare,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void partition_branchless_cleanup(RandomIt & first, RandomIt & last,
                                       RandomIt & block_l, RandomIt & block_r,
                                       Offset * offsets_l, Offset * offsets_r,
@@ -137,8 +137,8 @@ namespace ppqsort::impl {
     }
 
     template <typename RandomIt, class Compare,
-            typename T = std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = std::iterator_traits<RandomIt>::difference_type>
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void partition_branchless_core(RandomIt & first, RandomIt & last, T & pivot, Compare comp) {
         constexpr const int block_size = parameters::buffer_size;
 
@@ -148,7 +148,7 @@ namespace ppqsort::impl {
         alignas(parameters::cacheline_size) unsigned short offsets_l[parameters::buffer_size];
         alignas(parameters::cacheline_size) unsigned short offsets_r[parameters::buffer_size];
 
-        static_assert(std::numeric_limits<std::remove_all_extents<decltype(offsets_l)>::type>::max() >
+        static_assert(std::numeric_limits<std::remove_all_extents_t<decltype(offsets_l)>>::max() >
                       parameters::buffer_size,
                       "buffer_size is bigger than type for buffer can hold. This will overflow");
 
@@ -187,7 +187,8 @@ namespace ppqsort::impl {
                                      pivot, comp, block_size);
     }
 
-    template<class RandomIt, class Compare, typename T = std::iterator_traits<RandomIt>::value_type>
+    template<class RandomIt, class Compare,
+             typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline std::pair<RandomIt, bool> partition_right_branchless(RandomIt begin, RandomIt end, Compare comp) {
         T pivot = std::move(*begin);
         RandomIt first = begin;
