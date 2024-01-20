@@ -1,14 +1,54 @@
+---
+Language: Cpp
 BasedOnStyle: Google
-AccessModifierOffset: '-2'
-AlignTrailingComments: 'true'
-AllowAllParametersOfDeclarationOnNextLine: 'false'
-AlwaysBreakTemplateDeclarations: 'No'
-BreakBeforeBraces: Attach
-ColumnLimit: '100'
-ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
-IncludeBlocks: Regroup
-IndentPPDirectives: AfterHash
-IndentWidth: '4'
-NamespaceIndentation: All
+AccessModifierOffset: -4
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: true
+AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BraceWrapping: 
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: All
-BreakBeforeTernaryOperators: 'true'
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: AfterColon
+ColumnLimit: 120
+ContinuationIndentWidth: 8
+IncludeBlocks: Preserve
+IncludeCategories: 
+  - Regex: '^<.*'
+    Priority: 1
+  - Regex: '^".*'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+IncludeIsMainRegex: '([-_](test|unittest))?$'
+IndentPPDirectives: BeforeHash
+IndentWidth: 4
+InsertNewlineAtEOF: true
+MacroBlockBegin: ''
+MacroBlockEnd: ''
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+SpaceAfterCStyleCast: true
+SpaceAfterTemplateKeyword: false
+SpaceBeforeRangeBasedForLoopColon: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+TabWidth: 4
+...
