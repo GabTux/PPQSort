@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ppqsort::impl::par {
+namespace ppqsort::impl::openmp {
 
     template<class RandomIt, typename Offset, class Compare,
             typename T = typename std::iterator_traits<RandomIt>::value_type,

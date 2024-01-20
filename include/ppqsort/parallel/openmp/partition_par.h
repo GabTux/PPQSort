@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ppqsort::impl::par {
+namespace ppqsort::impl::openmp {
 
     template <side s, typename diff_t>
     inline bool get_new_block(diff_t& t_size, diff_t& t_iter, diff_t& t_block_bound,
