@@ -10,8 +10,9 @@ int main() {
     std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution uniform_dist(0, std::numeric_limits<int>::max());
 
-    constexpr int max_size = 2 << 20; // approx. 2 millions
-    std::vector<int> input(max_size);
+    constexpr int max_size = 2e7;
+    std::vector<int> input;
+    input.reserve(max_size);
     for (int i = 0; i < max_size; ++i) {
         input.emplace_back(uniform_dist(rng));
     }
@@ -38,9 +39,11 @@ int main() {
 
     // generate random strings
     const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    std::vector<std::string> input_str(max_size);
+    constexpr int max_size_string = 2e6;
+    std::vector<std::string> input_str;
+    input_str.reserve(max_size_string);
     std::uniform_int_distribution uniform_dist_str(0, static_cast<int>(chars.size()) - 1);
-    for (int i = 0; i < max_size; ++i) {
+    for (int i = 0; i < max_size_string; ++i) {
       constexpr int string_size = 100;
       std::string res(string_size, 0);
       res[string_size - 1] = chars[uniform_dist_str(rng)];
