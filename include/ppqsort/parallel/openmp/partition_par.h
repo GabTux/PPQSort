@@ -51,6 +51,25 @@ namespace ppqsort::impl::openmp {
                     break;
                 }
             }
+            // GCC version 12 and higher implements compare from OpenMP 5.1
+            // we can do this:
+            /*
+            bool reserved_cap;
+            #pragma omp atomic compare capture
+            {
+                reserved_cap = reserved[i];
+                if (reserved[i] == false) {
+                    reserved[i] = true;
+                }
+            }
+            if (!reserved_cap) {
+                if constexpr (s == side::left)
+                    swap_start = t_old - (i + 1) * block_size;
+                else
+                    swap_start = t_old + i * block_size + 1;
+                break;
+            }
+            */
         }
         RandomIt block_start, block_end;
         if constexpr (s == side::left) {
