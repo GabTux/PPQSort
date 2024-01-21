@@ -116,7 +116,6 @@ namespace ppqsort::impl {
         if ((size < seq_thr) || (threads < 2))
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(end - begin));
 
-        omp_set_nested(1);
         omp_set_max_active_levels(2);
         #pragma omp parallel
         {
