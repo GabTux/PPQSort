@@ -2,6 +2,10 @@
 
 namespace ppqsort::impl::openmp {
 
+    #if (defined(__GNUC__) && !defined(__clang__)) && !defined(__INTEL_COMPILER)
+        #define GCC_COMPILER
+    #endif
+
     template <side s, typename diff_t>
     inline bool get_new_block(diff_t& t_size, diff_t& t_iter, diff_t& t_block_bound,
                               diff_t& g_distance, diff_t& g_offset, const int& block_size) {
@@ -36,40 +40,33 @@ namespace ppqsort::impl::openmp {
         diff_t swap_start = -1;
         for (int i = 0; i < g_dirty_blocks_side; ++i) {
             // find clean block in dirty segment
-            bool t_success_reserved = false;
-            if (reserved[i] == 0) {
-                #pragma omp critical
-                if (reserved[i] == 0) {
-                    reserved[i] = true;
-                    t_success_reserved = true;
-                }
-                if (t_success_reserved) {
-                    if constexpr (s == side::left)
-                        swap_start = t_old - (i + 1) * block_size;
-                    else
-                        swap_start = t_old + i * block_size + 1;
-                    break;
-                }
-            }
-            // GCC version 12 and higher implements compare from OpenMP 5.1
-            // we can do this:
-            /*
-            bool reserved_cap;
+            // GCC >= 12 and clang >= 17 supports "compare" from OpenMP 5.1
+            bool t_reserve_success = false;
+            #if (defined(GCC_COMPILER) && (__GNUC__ >= 12)) || (defined(__clang__) && (__clang_major__ >= 17))
             #pragma omp atomic compare capture
             {
-                reserved_cap = reserved[i];
+                t_reserve_success = reserved[i];
                 if (reserved[i] == false) {
                     reserved[i] = true;
                 }
             }
-            if (!reserved_cap) {
+            t_reserve_success = !t_reserve_success;
+            #else
+            if (reserved[i] == false) {
+                #pragma omp critical
+                if (reserved[i] == false) {
+                    reserved[i] = true;
+                    reserved_cap = true;
+                }
+            }
+            #endif
+            if (t_reserve_success) {
                 if constexpr (s == side::left)
                     swap_start = t_old - (i + 1) * block_size;
                 else
                     swap_start = t_old + i * block_size + 1;
                 break;
             }
-            */
         }
         RandomIt block_start, block_end;
         if constexpr (s == side::left) {
