@@ -1,7 +1,6 @@
 #pragma once
 
-#include <iostream>
-
+#include "partition_par.h"
 #include "thread_pool.h"
 #include "../../mainloop.h"
 
@@ -35,15 +34,19 @@ namespace ppqsort::impl {
                 // pivot is the same as previous pivot
                 // put same elements to the left, and we do not have to recurse
                 if (!leftmost && !comp(*(begin-1), *begin)) {
-                    begin = _partition_to_left(begin, end, comp) + 1;
+                    begin = partition_to_left(begin, end, comp) + 1;
                     continue;
                 }
 
                 std::pair<RandomIt, bool> part_result;
-                part_result = branchless ? partition_right_branchless(begin, end, comp)
-                                           : _partition_to_right(begin, end, comp);
+                if (threads < 2) {
+                    part_result = branchless ? partition_right_branchless(begin, end, comp)
+                                             : partition_to_right(begin, end, comp);
+                } else {
+                    part_result = partition_to_right_par(begin, end, comp, threads);
+                }
                 RandomIt pivot_pos = part_result.first;
-                bool already_partitioned = part_result.second;
+                const bool already_partitioned = part_result.second;
 
                 diff_t l_size = pivot_pos - begin;
                 diff_t r_size = end - (pivot_pos + 1);
@@ -81,10 +84,10 @@ namespace ppqsort::impl {
                 }
 
                 if (size > seq_thr) {
+                    threads >>= 1;
                     thread_pool.push_task([begin, pivot_pos, comp, bad_allowed, seq_thr, threads, &thread_pool, leftmost] {
                         par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, seq_thr, threads, thread_pool, leftmost);
                     });
-                    //par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, seq_thr, threads, thread_pool, leftmost);
                 } else {
                     seq_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, leftmost);
                 }

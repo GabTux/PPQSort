@@ -8,27 +8,30 @@
 
 #ifndef NDEBUG
     #include <bitset>
+    #include <iostream>
+    #include <syncstream>
     #define TO_S(val) std::to_string(val)
     #define PRINT_ITERS(lp, rp, msg)                                   \
         std::cout << msg << ": ";                                      \
         for (auto i = lp; i != (rp - 1); ++i) std::cout << *i << ", "; \
-        std::cout << *(rp - 1) << std::endl
-    #define PRINT(str) std::cout << str << std::endl
-    #define PRINT_ATOMIC(id, str) \
+        std::cout << *(rp - 1) << std::endl;
+    #define PRINT_ATOMIC_OMP(id, str) \
         _Pragma("omp critical") { std::cout << "my_id: " + std::to_string(id) + " " + str << std::endl << std::flush; }
-    #define DO_SINGLE(func) \
+    #define DO_SINGLE_OMP(func) \
         _Pragma("omp barrier") _Pragma("omp single") { func; }
     #define PRINT_VAL(str, val) (std::cout << str << ": " << std::to_string(val) << std::endl)
     #define PRINT_BIN(str, val) (std::cout << str << ": " << std::bitset<64>(val) << std::endl)
 
+    #define PRINT_ATOMIC_CPP(str) \
+        std::osyncstream(std::cout) << str << std::endl;
 #else
     #define TO_S(val)
     #define PRINT_ITERS(lp, rp, msg)
-    #define PRINT(str)
-    #define PRINT_ATOMIC(id, str)
+    #define PRINT_ATOMIC_OMP(id, str)
     #define PRINT_VAL(str, val)
     #define PRINT_BIN(str, val)
-    #define DO_SINGLE(func)
+    #define DO_SINGLE_OMP(func)
+    #define PRINT_ATOMIC_CPP(str)
 #endif
 
 #ifdef TIME_MEASURE
