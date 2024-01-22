@@ -37,14 +37,14 @@ namespace ppqsort::impl {
                 // pivot is the same as previous pivot
                 // put same elements to the left, and we do not have to recurse
                 if (!leftmost && !comp(*(begin-1), *begin)) {
-                    begin = _partition_to_left(begin, end, comp) + 1;
+                    begin = partition_to_left(begin, end, comp) + 1;
                     continue;
                 }
 
                 std::pair<RandomIt, bool> part_result;
                 if (threads < 2) {
                     part_result = branchless ? partition_right_branchless(begin, end, comp)
-                                               : _partition_to_right(begin, end, comp);
+                                               : partition_to_right(begin, end, comp);
                 } else {
                     part_result = branchless ? partition_right_branchless_par(begin, end, comp, threads)
                                                : partition_to_right_par(begin, end, comp, threads);

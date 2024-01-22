@@ -121,12 +121,12 @@ namespace ppqsort::impl {
             // pivot is the same as previous pivot
             // put same elements to the left, and we do not have to recurse
             if (!leftmost && !comp(*(begin-1), *begin)) {
-                begin = _partition_to_left(begin, end, comp) + 1;
+                begin = partition_to_left(begin, end, comp) + 1;
                 continue;
             }
 
             auto part_result = branchless ? partition_right_branchless(begin, end, comp)
-                                          : _partition_to_right(begin, end, comp);
+                                          : partition_to_right(begin, end, comp);
             RandomIt pivot_pos = part_result.first;
             const bool already_partitioned = part_result.second;
 

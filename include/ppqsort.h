@@ -4,14 +4,16 @@
 
 #pragma once
 
-#include "ppqsort/parameters.h"
 #include "ppqsort/mainloop.h"
+#include "ppqsort/parameters.h"
+
 
 #ifdef _OPENMP
 #include "ppqsort/parallel/openmp/mainloop_par.h"
 #else
-#include "ppqsort/parallel/cpp/mainloop_par_cpp.h"
+#include "ppqsort/parallel/cpp/mainloop_par.h"
 #endif
+
 
 namespace ppqsort::impl {
    template <bool Force_branchless = false,
