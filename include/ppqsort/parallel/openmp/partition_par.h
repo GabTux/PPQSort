@@ -40,7 +40,7 @@ namespace ppqsort::impl::openmp {
         diff_t swap_start = -1;
         for (int i = 0; i < g_dirty_blocks_side; ++i) {
             // find clean block in dirty segment
-            // GCC >= 12 and clang >= 17 supports "compare" from OpenMP 5.1
+            // GCC >= 12 and clang >= 17 supports "atomic compare" from OpenMP 5.1
             bool t_reserve_success = false;
             #if (defined(GCC_COMPILER) && (__GNUC__ >= 12)) || (defined(__clang__) && (__clang_major__ >= 17))
             #pragma omp atomic compare capture
@@ -55,8 +55,7 @@ namespace ppqsort::impl::openmp {
             if (reserved[i] == false) {
                 #pragma omp critical
                 if (reserved[i] == false) {
-                    reserved[i] = true;
-                    reserved_cap = true;
+                    t_reserve_success = reserved[i] = true;
                 }
             }
             #endif
@@ -146,11 +145,49 @@ namespace ppqsort::impl::openmp {
         }
     }
 
+    template <bool branchless, typename RandomIt, typename Compare,
+            typename T = typename std::iterator_traits<RandomIt>::value_type,
+            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
+    inline std::pair<RandomIt, bool> seq_cleanup(const RandomIt& g_begin, const T& pivot,
+                                                const Compare& comp, const diff_t& g_first_offset,
+                                                const diff_t& g_last_offset, bool & g_already_partitioned) {
+
+
+        RandomIt final_first = g_begin + g_first_offset - 1;
+        RandomIt final_last = g_begin + g_last_offset + 1;
+
+        while (final_first < final_last && comp(*++final_first, pivot));
+        while (final_first < final_last && !comp(*--final_last, pivot));
+        const bool cleanup_already_partitioned = final_first >= final_last;
+
+        if constexpr (branchless) {
+            if (!cleanup_already_partitioned)
+                partition_branchless_core(final_first, final_last, pivot, comp);
+        } else {
+            // iterate from last and first and swap if needed
+            while (final_first < final_last) {
+                // this swap guarantees, that we do not have to check for bounds
+                std::iter_swap(final_first, final_last);
+                while (comp(*++final_first, pivot));
+                while (!comp(*--final_last, pivot));
+            }
+        }
+
+        g_already_partitioned &= cleanup_already_partitioned;
+
+        // move pivot from start to according place
+        RandomIt pivot_pos = --final_first;
+        if (g_begin != pivot_pos)
+            *g_begin = std::move(*pivot_pos);
+        *pivot_pos = std::move(pivot);
+        return std::make_pair(pivot_pos, g_already_partitioned);
+    }
+
 
     template <typename RandomIt, typename Compare,
             typename T = typename std::iterator_traits<RandomIt>::value_type,
             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
-    inline std::pair<RandomIt, bool> _partition_to_right_par(const RandomIt g_begin,
+    inline std::pair<RandomIt, bool> partition_to_right_par(const RandomIt g_begin,
                                                              const RandomIt g_end,
                                                              Compare comp,
                                                              const int thread_count) {
@@ -248,28 +285,6 @@ namespace ppqsort::impl::openmp {
         }  // End of a parallel section
 
         // do sequential cleanup of dirty segment
-        RandomIt final_first = g_begin + g_first_offset - 1;
-        RandomIt final_last = g_begin + g_last_offset + 1;
-
-        while (final_first < final_last && comp(*++final_first, pivot));
-        while (final_first < final_last && !comp(*--final_last, pivot));
-        bool cleanup_already_partitioned = final_first >= final_last;
-
-        // iterate from last and first and swap if needed
-        while (final_first < final_last) {
-            // this swap guarantees, that we do not have to check for bounds
-            std::iter_swap(final_first, final_last);
-            while (comp(*++final_first, pivot));
-            while (!comp(*--final_last, pivot));
-        }
-
-        g_already_partitioned &= cleanup_already_partitioned;
-
-        // move pivot from start to according place
-        RandomIt pivot_pos = --final_first;
-        if (g_begin != pivot_pos)
-            *g_begin = std::move(*pivot_pos);
-        *pivot_pos = std::move(pivot);
-        return std::make_pair(pivot_pos, g_already_partitioned);
+        return seq_cleanup<false>(g_begin, pivot, comp, g_first_offset, g_last_offset, g_already_partitioned);
     }
 }

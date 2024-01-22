@@ -47,7 +47,7 @@ namespace ppqsort::impl {
                                                : _partition_to_right(begin, end, comp);
                 } else {
                     part_result = branchless ? partition_right_branchless_par(begin, end, comp, threads)
-                                               : _partition_to_right_par(begin, end, comp, threads);
+                                               : partition_to_right_par(begin, end, comp, threads);
                 }
                 RandomIt pivot_pos = part_result.first;
                 bool already_partitioned = part_result.second;

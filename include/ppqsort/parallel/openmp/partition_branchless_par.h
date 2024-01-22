@@ -1,5 +1,7 @@
 #pragma once
 
+#include "partition_par.h"
+
 namespace ppqsort::impl::openmp {
 
     template<class RandomIt, typename Offset, class Compare,
@@ -157,25 +159,6 @@ namespace ppqsort::impl::openmp {
                               block_size);
         }  // End of parallel segment
 
-        // sequential cleanup of dirty blocks in the middle
-        // call partition branchless inner loop
-        // do sequential cleanup of dirty segment
-        RandomIt final_first = g_begin + g_first_offset - 1;
-        RandomIt final_last = g_begin + g_last_offset + 1;
-        while (final_first < final_last && comp(*++final_first, g_pivot));
-        while (final_first < final_last && !comp(*--final_last, g_pivot));
-        bool cleanup_already_partitioned = final_first >= final_last;
-
-        if (!cleanup_already_partitioned)
-            partition_branchless_core(final_first, final_last, g_pivot, comp);
-
-        g_already_partitioned &= cleanup_already_partitioned;
-
-        // Put the g_pivot in the correct place
-        RandomIt pivot_pos = --final_first;
-        if (g_begin != pivot_pos)
-            *g_begin = std::move(*pivot_pos);
-        *pivot_pos = std::move(g_pivot);
-        return std::make_pair(pivot_pos, g_already_partitioned);
+        return seq_cleanup<true>(g_begin, g_pivot, comp, g_first_offset, g_last_offset, g_already_partitioned);
     }
 }
