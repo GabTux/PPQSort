@@ -42,7 +42,9 @@ target_compile_options(${PROJECT_NAME} INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MS
 
 # Link dependencies
 find_package(OpenMP)
-target_link_libraries(${PROJECT_NAME} INTERFACE OpenMP::OpenMP_CXX)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(${PROJECT_NAME} INTERFACE OpenMP::OpenMP_CXX)
+endif()
 
 target_include_directories(
   ${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
