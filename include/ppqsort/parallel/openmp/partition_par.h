@@ -80,8 +80,8 @@ namespace ppqsort::impl::openmp {
     }
 
     template <typename RandomIt, typename diff_t>
-    inline void swap_dirty_blocks(const RandomIt& g_begin, diff_t & t_left, diff_t & t_right,
-                                  diff_t & t_left_end, diff_t & t_right_start,
+    inline void swap_dirty_blocks(const RandomIt& g_begin, const diff_t & t_left, const diff_t & t_right,
+                                  const diff_t & t_left_end, const diff_t & t_right_start,
                                   int & g_dirty_blocks_left, int & g_dirty_blocks_right,
                                   diff_t & g_first_offset, diff_t & g_last_offset,
                                   std::unique_ptr<bool[]>& g_reserved_left,
@@ -135,7 +135,7 @@ namespace ppqsort::impl::openmp {
                                      t_right_start, g_reserved_right, block_size);
         }
 
-        // update global offsets so its separate clean and dirty segment
+        // update global offsets so it separates clean and dirty segment
         // all threads after last barrier will not write to these offsets
         // it is safe to do it non atomically
         #pragma omp single
@@ -187,17 +187,17 @@ namespace ppqsort::impl::openmp {
     template <typename RandomIt, typename Compare,
             typename T = typename std::iterator_traits<RandomIt>::value_type,
             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
-    inline std::pair<RandomIt, bool> partition_to_right_par(const RandomIt g_begin,
-                                                             const RandomIt g_end,
-                                                             Compare comp,
-                                                             const int thread_count) {
+    inline std::pair<RandomIt, bool> partition_to_right_par(const RandomIt& g_begin,
+                                                             const RandomIt& g_end,
+                                                             const Compare& comp,
+                                                             const int& thread_count) {
         constexpr int block_size = parameters::par_partition_block_size;
         const diff_t g_size = g_end - g_begin;
         diff_t g_distance = g_size - 1;
         
         // at least 2 blocks for each thread
         if (g_distance < 2 * block_size * thread_count)
-            return _partition_to_right(g_begin, g_end, comp);
+            return partition_to_right(g_begin, g_end, comp);
 
         T pivot = std::move(*g_begin);
         diff_t g_first_offset = 1;
