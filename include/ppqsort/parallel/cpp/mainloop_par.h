@@ -1,5 +1,6 @@
 #pragma once
 
+#include "partition_branchless_par.h"
 #include "partition_par.h"
 #include "thread_pool.h"
 #include "../../mainloop.h"
@@ -43,7 +44,8 @@ namespace ppqsort::impl {
                     part_result = branchless ? partition_right_branchless(begin, end, comp)
                                              : partition_to_right(begin, end, comp);
                 } else {
-                    part_result = partition_to_right_par(begin, end, comp, threads);
+                    part_result = branchless ? partition_right_branchless_par(begin, end, comp, threads)
+                                             : partition_to_right_par(begin, end, comp, threads);
                 }
                 RandomIt pivot_pos = part_result.first;
                 const bool already_partitioned = part_result.second;

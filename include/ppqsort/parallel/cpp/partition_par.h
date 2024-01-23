@@ -74,7 +74,7 @@ namespace ppqsort::impl::cpp {
                                   std::unique_ptr<std::atomic<bool>[]>& g_reserved_left,
                                   std::unique_ptr<std::atomic<bool>[]>& g_reserved_right,
                                   const int& block_size, std::barrier<>& barrier,
-                                  const int & t_my_id)
+                                  const int& t_my_id)
     {
         const bool t_dirty_left = t_left <= t_left_end;
         const bool t_dirty_right = t_right >= t_right_start;
@@ -139,7 +139,8 @@ namespace ppqsort::impl::cpp {
     inline void process_blocks(const RandomIt & g_begin, const Compare & comp,
                                const diff_t& g_size, std::atomic<diff_t>& g_distance,
                                std::atomic<diff_t>& g_first_offset, std::atomic<diff_t>& g_last_offset,
-                               const int & block_size, const T& pivot, std::atomic<unsigned char>& g_already_partitioned,
+                               const int & block_size, const T& pivot,
+                               std::atomic<unsigned char>& g_already_partitioned,
                                std::atomic<int>& g_dirty_blocks_left, std::atomic<int>& g_dirty_blocks_right,
                                std::unique_ptr<std::atomic<bool>[]>& g_reserved_left,
                                std::unique_ptr<std::atomic<bool>[]>& g_reserved_right,
@@ -209,32 +210,26 @@ namespace ppqsort::impl::cpp {
                                                              const int thread_count) {
         constexpr int block_size = parameters::par_partition_block_size;
         const diff_t g_size = g_end - g_begin;
-        std::atomic<diff_t> g_distance = g_size - 1;
 
         // at least 2 blocks for each thread
-        if (g_distance < 2 * block_size * thread_count)
+        if (g_size - 1 < 2 * block_size * thread_count)
             return partition_to_right(g_begin, g_end, comp);
 
         const T pivot = std::move(*g_begin);
-        std::atomic<diff_t> g_first_offset = 1;
-        std::atomic<diff_t> g_last_offset = g_size - 1;
+        // reserve first blocks for each thread
+        // first blocks will be assigned statically
+        std::atomic<diff_t> g_first_offset = 1 + block_size * thread_count;
+        std::atomic<diff_t> g_last_offset = g_size - 1 - block_size * thread_count;
+        std::atomic<diff_t> g_distance = g_size - 1 - block_size * thread_count * 2;
 
         // counters for dirty blocks
         std::atomic<int> g_dirty_blocks_left = 0;
         std::atomic<int> g_dirty_blocks_right = 0;
 
         // helper arrays for cleaning blocks
-        std::unique_ptr<std::atomic<bool>[]> g_reserved_left(new std::atomic<bool>[thread_count]);
-        std::unique_ptr<std::atomic<bool>[]> g_reserved_right(new std::atomic<bool>[thread_count]);
+        std::unique_ptr<std::atomic<bool>[]> g_reserved_left(new std::atomic<bool>[thread_count]{false});
+        std::unique_ptr<std::atomic<bool>[]> g_reserved_right(new std::atomic<bool>[thread_count]{false});
         std::atomic<unsigned char> g_already_partitioned = 1; // because atomic bool does not support &= operator
-        for (int i = 0; i < thread_count; ++i) {
-            g_reserved_left[i] = g_reserved_right[i] = false;
-        }
-
-        // reserve first blocks for each thread
-        g_first_offset += block_size * thread_count;
-        g_last_offset -= block_size * thread_count;
-        g_distance -= block_size * thread_count * 2;
 
         std::barrier<> barrier(thread_count);
         std::vector<std::thread> threads;

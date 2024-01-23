@@ -1,39 +1,10 @@
 #pragma once
 
 #include "partition_par.h"
+#include "../../partition.h"
+#include "../../partition_branchless.h"
 
 namespace ppqsort::impl::openmp {
-
-    template<class RandomIt, typename Offset, class Compare,
-            typename T = typename std::iterator_traits<RandomIt>::value_type,
-            typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
-    inline void solve_left_block(const RandomIt & g_begin,
-                                 diff_t & t_left, diff_t & t_left_start, diff_t & t_left_end,
-                                 Offset * t_offsets_l, diff_t & t_count_l, T & g_pivot, Compare comp) {
-        // find the first element from block start, which is greater or equal to pivot
-        while (t_left <= t_left_end && comp(g_begin[t_left], g_pivot)) {
-            ++t_left;
-        }
-        const diff_t elem_rem_l = t_left_end - t_left + 1;
-        t_left_start = t_left;
-        populate_block<side::left>(g_begin, t_left, g_pivot, t_offsets_l, t_count_l, comp, elem_rem_l);
-    }
-
-    template<class RandomIt, typename Offset, class Compare,
-             typename T = typename std::iterator_traits<RandomIt>::value_type,
-             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
-    inline void solve_right_block(const RandomIt & g_begin,
-                                  diff_t & t_right, diff_t & t_right_start, diff_t & t_right_end,
-                                 Offset * t_offsets_r, diff_t & t_count_r, T & g_pivot, Compare comp) {
-        // find first elem from block g_end, which is less than pivot
-        while (t_right >= t_right_start && !comp(g_begin[t_right], g_pivot)) {
-            --t_right;
-        }
-        const diff_t elem_rem_r = t_right - t_right_start + 1;
-        t_right_end = t_right;
-        populate_block<side::right>(g_begin, t_right, g_pivot, t_offsets_r, t_count_r, comp, elem_rem_r);
-    }
-
 
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type,
