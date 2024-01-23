@@ -30,12 +30,9 @@ namespace ppqsort::impl::openmp {
         int g_dirty_blocks_left = 0;
         int g_dirty_blocks_right = 0;
 
-        std::unique_ptr<bool[]> g_reserved_left(new bool[thread_count]);
-        std::unique_ptr<bool[]> g_reserved_right(new bool[thread_count]);
+        std::unique_ptr<bool[]> g_reserved_left(new bool[thread_count]{false});
+        std::unique_ptr<bool[]> g_reserved_right(new bool[thread_count]{false});
         bool g_already_partitioned = true;
-        for (int i = 0; i < thread_count; ++i) {
-            g_reserved_left[i] = g_reserved_right[i] = false;
-        }
 
         // reserve first blocks for each thread
         g_first_offset += block_size * thread_count;
