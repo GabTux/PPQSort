@@ -48,12 +48,19 @@
 #endif
 
 namespace ppqsort::parameters {
+    #ifdef __cpp_lib_hardware_interference_size
+    using std::hardware_constructive_interference_size;
+    #else
+    // 64 bytes on x86-64 │ L1_CACHE_BYTES │ L1_CACHE_SHIFT │ __cacheline_aligned │ ...
+    constexpr std::size_t hardware_constructive_interference_size = 64;
+    #endif
+
     constexpr int insertion_threshold_primitive = 32;
     constexpr int insertion_threshold = 12;
     constexpr int partial_insertion_threshold = 8;
     constexpr int median_threshold = 128;
     constexpr int partition_ratio = 8;
-    constexpr int cacheline_size = 64;
+    constexpr int cacheline_size = hardware_constructive_interference_size;
     // 1536 elements from input blocks --> 24,5KB for doubles
     // offsets arrays 6 KB --> 30,5KB total should fit in 32 KB L1 cache
     constexpr int buffer_size = 24 * cacheline_size;
