@@ -54,4 +54,5 @@ int main() {
     TIME_MEASURE_START(ppqsort_time_par_str);
     ppqsort::sort(ppqsort::execution::par_force_branchless, input_str.begin(), input_str.end());
     TIME_MEASURE_END(ppqsort_time_par_str, "Parallel PPQSort time string");
+    return !std::ranges::is_sorted(input_str);
 }
