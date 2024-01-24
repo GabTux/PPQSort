@@ -34,7 +34,7 @@ namespace ppqsort::impl::cpp {
             alignas(parameters::cacheline_size) unsigned short t_offsets_l[parameters::buffer_size] = {0};
             alignas(parameters::cacheline_size) unsigned short t_offsets_r[parameters::buffer_size] = {0};
 
-            static_assert(std::numeric_limits<std::remove_all_extents<decltype(t_offsets_l)>::type>::max() >
+            static_assert(std::numeric_limits<std::remove_all_extents_t<decltype(t_offsets_l)>>::max() >
                           parameters::buffer_size,
                           "buffer_size is bigger than type for buffer can hold. This will overflow");
 
@@ -81,7 +81,7 @@ namespace ppqsort::impl::cpp {
                 t_count_r -= swapped_count; t_start_r += swapped_count;
             }
 
-            g_already_partitioned &= t_already_partitioned;
+            g_already_partitioned.fetch_and(t_already_partitioned, std::memory_order_release);
 
             t_right = t_right_start + t_count_r;
             t_left = t_left_end - t_count_l;
@@ -109,17 +109,17 @@ namespace ppqsort::impl::cpp {
         const T pivot = std::move(*g_begin);
         // reserve first blocks for each thread
         // first blocks will be assigned statically
-        std::atomic<diff_t> g_first_offset = 1 + block_size * thread_count;
-        std::atomic<diff_t> g_last_offset = g_size - 1 - block_size * thread_count;
-        std::atomic<diff_t> g_distance = g_size - 1 - block_size * thread_count * 2;
+        std::atomic<diff_t> g_first_offset(1 + block_size * thread_count);
+        std::atomic<diff_t> g_last_offset(g_size - 1 - block_size * thread_count);
+        std::atomic<diff_t> g_distance(g_size - 1 - block_size * thread_count * 2);
 
         // counters for dirty blocks
-        std::atomic<int> g_dirty_blocks_left = 0;
-        std::atomic<int> g_dirty_blocks_right = 0;
+        std::atomic<int> g_dirty_blocks_left{};
+        std::atomic<int> g_dirty_blocks_right{};
 
-        std::unique_ptr<std::atomic<bool>[]> g_reserved_left(new std::atomic<bool>[thread_count]{false});
-        std::unique_ptr<std::atomic<bool>[]> g_reserved_right(new std::atomic<bool>[thread_count]{false});
-        std::atomic<unsigned char> g_already_partitioned = 1;
+        std::unique_ptr<std::atomic<bool>[]> g_reserved_left(new std::atomic<bool>[thread_count]{});
+        std::unique_ptr<std::atomic<bool>[]> g_reserved_right(new std::atomic<bool>[thread_count]{});
+        std::atomic<unsigned char> g_already_partitioned(1);
 
         std::barrier<> barrier(thread_count);
         std::vector<std::thread> threads;
@@ -136,9 +136,9 @@ namespace ppqsort::impl::cpp {
         for(auto & th: threads)
             th.join();
 
-        int first_offset = g_first_offset.load(std::memory_order_seq_cst);
-        int last_offset = g_last_offset.load(std::memory_order_seq_cst);
-        bool already_partitioned = static_cast<bool>(g_already_partitioned.load(std::memory_order_seq_cst));
+        int first_offset = g_first_offset.load(std::memory_order_acquire);
+        int last_offset = g_last_offset.load(std::memory_order_acquire);
+        bool already_partitioned = static_cast<bool>(g_already_partitioned.load(std::memory_order_acquire));
         return seq_cleanup<false>(g_begin, pivot, comp, first_offset, last_offset, already_partitioned);
     }
 };
