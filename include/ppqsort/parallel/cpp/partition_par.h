@@ -3,6 +3,7 @@
 #include <barrier>
 #include <thread>
 
+#include "thread_pool.h"
 #include "../../partition.h"
 
 
@@ -144,61 +145,62 @@ namespace ppqsort::impl::cpp {
                                std::atomic<int>& g_dirty_blocks_left, std::atomic<int>& g_dirty_blocks_right,
                                std::unique_ptr<std::atomic<bool>[]>& g_reserved_left,
                                std::unique_ptr<std::atomic<bool>[]>& g_reserved_right,
-                               std::barrier<>& barrier, const int t_my_id) {
-            // each thread will get first two blocks without collisions
-            // iterators for given block
-            diff_t t_left = (block_size * t_my_id) + 1;
-            diff_t t_right = (g_size-1) - block_size * t_my_id;
+                               std::barrier<>& barrier, const int t_my_id, std::latch& part_done) {
+        // each thread will get first two blocks without collisions
+        // iterators for given block
+        diff_t t_left = (block_size * t_my_id) + 1;
+        diff_t t_right = (g_size-1) - block_size * t_my_id;
 
-            // block borders
-            diff_t t_left_end = t_left + block_size - 1;
-            diff_t t_right_start = t_right - block_size + 1;
+        // block borders
+        diff_t t_left_end = t_left + block_size - 1;
+        diff_t t_right_start = t_right - block_size + 1;
 
-            diff_t t_size = 0;
-            int t_already_partitioned = 1;
-            while (true) {
-                PRINT_ATOMIC_CPP("ID "+std::to_string(t_my_id)+": <"+std::to_string(t_left)+", "
-                    +std::to_string(t_left_end)+">, <"+std::to_string(t_right_start)+", "
-                    +std::to_string(t_right)+">");
-                // get new blocks if needed or end partitioning
-                if (t_left > t_left_end) {
-                    if (!get_new_block<left>(t_size, t_left, t_left_end,
-                                             g_distance, g_first_offset, block_size))
-                        break;
-                }
-                if (t_right < t_right_start) {
-                    if (!get_new_block<right>(t_size, t_right, t_right_start,
-                                              g_distance, g_last_offset, block_size))
-                        break;
-                }
-
-                // find first element from block start, which is greater or equal to pivot
-                // we must guard it, because in block nothing is guaranteed
-                while (t_left <= t_left_end && comp(g_begin[t_left], pivot)) {
-                    ++t_left;
-                }
-                // find first elem from block g_end, which is less than pivot
-                while (t_right >= t_right_start && !comp(g_begin[t_right], pivot)) {
-                    --t_right;
-                }
-
-                // do swaps
-                while (t_left < t_right) {
-                    if (t_left > t_left_end || t_right < t_right_start)
-                        break;
-                    std::iter_swap(g_begin + t_left, g_begin + t_right);
-                    t_already_partitioned = 0;
-                    while (++t_left <= t_left_end && comp(g_begin[t_left], pivot));
-                    while (--t_right >= t_right_start && !comp(g_begin[t_right], pivot));
-                }
+        diff_t t_size = 0;
+        int t_already_partitioned = 1;
+        while (true) {
+            PRINT_ATOMIC_CPP("ID "+std::to_string(t_my_id)+": <"+std::to_string(t_left)+", "
+                +std::to_string(t_left_end)+">, <"+std::to_string(t_right_start)+", "
+                +std::to_string(t_right)+">");
+            // get new blocks if needed or end partitioning
+            if (t_left > t_left_end) {
+                if (!get_new_block<left>(t_size, t_left, t_left_end,
+                                         g_distance, g_first_offset, block_size))
+                    break;
             }
-            g_already_partitioned.fetch_and(t_already_partitioned, std::memory_order_release);
+            if (t_right < t_right_start) {
+                if (!get_new_block<right>(t_size, t_right, t_right_start,
+                                          g_distance, g_last_offset, block_size))
+                    break;
+            }
 
-            // swaps dirty blocks from clean segment to dirty segment
-            swap_dirty_blocks(g_begin, t_left, t_right, t_left_end, t_right_start,
-                              g_dirty_blocks_left, g_dirty_blocks_right,
-                              g_first_offset, g_last_offset, g_reserved_left, g_reserved_right,
-                              block_size, barrier, t_my_id);
+            // find first element from block start, which is greater or equal to pivot
+            // we must guard it, because in block nothing is guaranteed
+            while (t_left <= t_left_end && comp(g_begin[t_left], pivot)) {
+                ++t_left;
+            }
+            // find first elem from block g_end, which is less than pivot
+            while (t_right >= t_right_start && !comp(g_begin[t_right], pivot)) {
+                --t_right;
+            }
+
+            // do swaps
+            while (t_left < t_right) {
+                if (t_left > t_left_end || t_right < t_right_start)
+                    break;
+                std::iter_swap(g_begin + t_left, g_begin + t_right);
+                t_already_partitioned = 0;
+                while (++t_left <= t_left_end && comp(g_begin[t_left], pivot));
+                while (--t_right >= t_right_start && !comp(g_begin[t_right], pivot));
+            }
+        }
+        g_already_partitioned.fetch_and(t_already_partitioned, std::memory_order_release);
+
+        // swaps dirty blocks from clean segment to dirty segment
+        swap_dirty_blocks(g_begin, t_left, t_right, t_left_end, t_right_start,
+                          g_dirty_blocks_left, g_dirty_blocks_right,
+                          g_first_offset, g_last_offset, g_reserved_left, g_reserved_right,
+                          block_size, barrier, t_my_id);
+        part_done.count_down();
     }
 
     template <typename RandomIt, typename Compare,
@@ -207,7 +209,8 @@ namespace ppqsort::impl::cpp {
     inline std::pair<RandomIt, bool> partition_to_right_par(const RandomIt g_begin,
                                                              const RandomIt g_end,
                                                              Compare comp,
-                                                             const int thread_count) {
+                                                             const int thread_count,
+                                                             ThreadPool<>& thread_pool) {
         constexpr int block_size = parameters::par_partition_block_size;
         const diff_t g_size = g_end - g_begin;
 
@@ -232,18 +235,17 @@ namespace ppqsort::impl::cpp {
         std::atomic<unsigned char> g_already_partitioned(1); // because atomic bool does not support &= operator
 
         std::barrier<> barrier(thread_count);
-        std::vector<std::thread> threads;
-        threads.reserve(thread_count);
+        std::latch part_done(thread_count);
         for (int i = 0; i < thread_count; ++i) {
-            threads.emplace_back(&process_blocks<RandomIt, Compare>, std::ref(g_begin), std::ref(comp),
-                                 std::ref(g_size), std::ref(g_distance), std::ref(g_first_offset),
-                                 std::ref(g_last_offset), std::ref(block_size), std::ref(pivot),
-                                 std::ref(g_already_partitioned), std::ref(g_dirty_blocks_left),
-                                 std::ref(g_dirty_blocks_right), std::ref(g_reserved_left),
-                                 std::ref(g_reserved_right), std::ref(barrier), i);
+            thread_pool.push_task([g_begin, comp, g_size, &g_distance, &g_first_offset, &g_last_offset,
+                                   block_size, pivot, &g_already_partitioned, &g_dirty_blocks_left,
+                                   &g_dirty_blocks_right, &g_reserved_left, &g_reserved_right, &barrier,
+                                   i, &part_done] {
+                process_blocks<RandomIt, Compare>(g_begin, comp, g_size, g_distance, g_first_offset,
+                    g_last_offset, block_size, pivot, g_already_partitioned, g_dirty_blocks_left,
+                    g_dirty_blocks_right, g_reserved_left, g_reserved_right, barrier, i, part_done); });
         }
-        for(auto & th: threads)
-            th.join();
+        part_done.wait();
 
         int first_offset = g_first_offset.load(std::memory_order_acquire);
         int last_offset = g_last_offset.load(std::memory_order_acquire);

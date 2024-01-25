@@ -19,11 +19,17 @@ namespace ppqsort::impl::cpp {
             }
 
             ~ThreadPool() {
+                if (!stopped)
+                    stop_and_wait();
+            }
+
+            void stop_and_wait() {
                 for (size_t i = 0; i < threads_.size(); ++i) {
                     threads_[i].request_stop();
                     threads_tasks_[i].task_semaphore.release();
                     threads_[i].join();
                 }
+                stopped = true;
             }
 
             void push_task(taskType&& task) {
@@ -108,5 +114,6 @@ namespace ppqsort::impl::cpp {
             std::deque<unsigned int> threads_priorities_;
             alignas(parameters::cacheline_size) std::atomic<unsigned int> task_count_{0};
             std::mutex mtx_priority_;
+            bool stopped = false;
     };
 }

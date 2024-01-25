@@ -7,6 +7,11 @@
 
 namespace ppqsort::impl {
 
+        struct ThreadPools {
+            cpp::ThreadPool<> partition;
+            cpp::ThreadPool<> tasks;
+        };
+
         namespace cpp {
         template <typename RandomIt, typename Compare,
                   bool branchless,
@@ -14,7 +19,7 @@ namespace ppqsort::impl {
                   typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
         inline void par_loop(RandomIt begin, RandomIt end, Compare comp,
                              diff_t bad_allowed, diff_t seq_thr, int threads,
-                             ThreadPool<>& thread_pool,
+                             ThreadPools& thread_pools,
                              bool leftmost = true) {
             constexpr int insertion_threshold = branchless ?
                                               parameters::insertion_threshold_primitive
@@ -44,8 +49,8 @@ namespace ppqsort::impl {
                     part_result = branchless ? partition_right_branchless(begin, end, comp)
                                              : partition_to_right(begin, end, comp);
                 } else {
-                    part_result = branchless ? partition_right_branchless_par(begin, end, comp, threads)
-                                             : partition_to_right_par(begin, end, comp, threads);
+                    part_result = branchless ? partition_right_branchless_par(begin, end, comp, threads, thread_pools.partition)
+                                             : partition_to_right_par(begin, end, comp, threads, thread_pools.partition);
                 }
                 RandomIt pivot_pos = part_result.first;
                 const bool already_partitioned = part_result.second;
@@ -87,9 +92,10 @@ namespace ppqsort::impl {
 
                 if (size > seq_thr) {
                     threads >>= 1;
-                    thread_pool.push_task([begin, pivot_pos, comp, bad_allowed, seq_thr, threads, &thread_pool, leftmost] {
-                        par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, seq_thr, threads, thread_pool, leftmost);
-                    });
+                    thread_pools.tasks.push_task([begin, pivot_pos, comp, bad_allowed, seq_thr,
+                                                  threads, &thread_pools, leftmost] {
+                        par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp,
+                            bad_allowed, seq_thr, threads, thread_pools, leftmost); });
                 } else {
                     seq_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, leftmost);
                 }
@@ -112,9 +118,13 @@ namespace ppqsort::impl {
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
 
 
-        cpp::ThreadPool<> threadpool;
+        ThreadPools threadpools;
         cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
                                                      log2(end - begin),
-                                                     seq_thr, threads, threadpool);
+                                                     seq_thr, threads, threadpools);
+
+        // first we need to wait for recursive tasks, then we can destroy partition threads
+        threadpools.tasks.stop_and_wait();
+        threadpools.partition.stop_and_wait();
     }
 }
