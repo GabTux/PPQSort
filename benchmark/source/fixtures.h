@@ -8,11 +8,11 @@
 #include <parallel/algorithm>
 #include <cstring>
 
-#define ELEMENTS_VECTOR_DEFAULT size_t(2e9)
-#define ELEMENTS_STRING_DEFAULT size_t(2e7)
-#define STRING_SIZE_DEFAULT size_t(1001)
+#define ELEMENTS_VECTOR_DEFAULT std::size_t(2e9)
+#define ELEMENTS_STRING_DEFAULT std::size_t(2e7)
+#define STRING_SIZE_DEFAULT std::size_t(1001)
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT>
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT>
 class VectorFixture : public benchmark::Fixture {
 public:
     VectorFixture() {
@@ -41,7 +41,7 @@ protected:
     std::vector<T> data;
 };
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0, typename Distribution = std::conditional_t<std::is_integral_v<T>,
@@ -64,7 +64,7 @@ protected:
             Distribution uniform_dist(Min, Max);
             std::mt19937 rng(seeds[omp_get_thread_num()]);
             #pragma omp for schedule(static)
-            for (size_t i = 0; i < Size; ++i)
+            for (std::size_t i = 0; i < Size; ++i)
                 this->data[i] = uniform_dist(rng);
         }
     }
@@ -76,7 +76,7 @@ void prepare_ascending(T & data) {
     __gnu_parallel::sort(data.begin(), data.end(), __gnu_parallel::balanced_quicksort_tag());
 }
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0>
@@ -94,7 +94,7 @@ void prepare_descending(T & data) {
     std::reverse(data.begin(), data.end());
 }
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0>
@@ -107,12 +107,12 @@ public:
 };
 
 template <typename T>
-void prepare_organpipe(T & data, size_t mid) {
+void prepare_organpipe(T & data, std::size_t mid) {
     __gnu_parallel::sort(data.begin(), data.end(), __gnu_parallel::balanced_quicksort_tag());
     std::reverse(data.begin() + mid, data.end());
 }
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0>
@@ -130,7 +130,7 @@ void prepare_rotated(T & data) {
     std::rotate(data.begin(), data.begin() + 1, data.end());
 }
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0>
@@ -148,7 +148,7 @@ void prepare_heap(T & data) {
     std::make_heap(data.begin(), data.end());
 }
 
-template <typename T, size_t Size = ELEMENTS_VECTOR_DEFAULT,
+template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
         T Min = std::numeric_limits<T>::min(),
         T Max = std::numeric_limits<T>::max(),
         int Seed = 0>
@@ -161,7 +161,7 @@ public:
 };
 
 
-template <typename T = int, size_t Size = ELEMENTS_VECTOR_DEFAULT>
+template <typename T = int, std::size_t Size = ELEMENTS_VECTOR_DEFAULT>
 class AdversaryVectorFixture : public VectorFixture<T, Size> {
 public:
     void GenerateData() override {
@@ -198,7 +198,8 @@ public:
     }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT,
+          std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class RandomStringVectorFixture : public VectorFixture<std::string, Size> {
     private:
         std::string GenerateString(const int seed) {
@@ -225,12 +226,13 @@ class RandomStringVectorFixture : public VectorFixture<std::string, Size> {
             for (int i = 0; i < omp_get_max_threads(); ++i)
                 seeds.emplace_back(Seed + i);
             #pragma omp parallel for schedule(static)
-            for (size_t i = 0; i < Size; ++i)
+            for (std::size_t i = 0; i < Size; ++i)
                 this->data[i] = GenerateString(seeds[omp_get_thread_num()]);
         }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT,
+          std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class AscendingStringVectorFixture : public RandomStringVectorFixture<Prepended, StringSize, Size, Seed> {
     void GenerateData() override {
         this->RandomData();
@@ -238,7 +240,7 @@ class AscendingStringVectorFixture : public RandomStringVectorFixture<Prepended,
     }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT, std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class DescendingStringVectorFixture : public RandomStringVectorFixture<Prepended, StringSize, Size, Seed> {
     void GenerateData() override {
         this->RandomData();
@@ -246,7 +248,7 @@ class DescendingStringVectorFixture : public RandomStringVectorFixture<Prepended
     }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT, std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class OrganPipeStringVectorFixture : public RandomStringVectorFixture<Prepended, StringSize, Size, Seed> {
     void GenerateData() override {
         this->RandomData();
@@ -254,7 +256,7 @@ class OrganPipeStringVectorFixture : public RandomStringVectorFixture<Prepended,
     }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT, std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class RotatedStringVectorFixture : public RandomStringVectorFixture<Prepended, StringSize, Size, Seed> {
     void GenerateData() override {
         this->RandomData();
@@ -262,7 +264,7 @@ class RotatedStringVectorFixture : public RandomStringVectorFixture<Prepended, S
     }
 };
 
-template <bool Prepended = true, size_t StringSize = STRING_SIZE_DEFAULT, size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
+template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT, std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class HeapStringVectorFixture : public RandomStringVectorFixture<Prepended, StringSize, Size, Seed> {
     void GenerateData() override {
         this->RandomData();

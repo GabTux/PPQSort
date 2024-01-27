@@ -10,7 +10,7 @@
 template <typename T>
 class VectorFixture : public ::testing::Test {
     public:
-        virtual void AllocateVector(size_t size) {
+        virtual void AllocateVector(std::size_t size) {
             this->data.resize(size);
         };
 
@@ -29,7 +29,7 @@ class RandomVectorFixture : public VectorFixture<T> {
         void FillVector(T from, T to) {
             std::mt19937 rng(std::random_device{}());
             Distribution uniform_dist(from, to);
-            for (size_t i = 0; i < this->data.size(); ++i)
+            for (std::size_t i = 0; i < this->data.size(); ++i)
                 this->data[i] = uniform_dist(rng);
         }
 
