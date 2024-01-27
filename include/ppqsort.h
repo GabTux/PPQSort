@@ -25,7 +25,7 @@ namespace ppqsort::impl {
            return;
 
        constexpr bool branchless = Force_branchless || Branchless;
-       seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2_64(end - begin));
+       seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(end - begin));
    }
 
    template <typename ExecutionPolicy, typename... T>
