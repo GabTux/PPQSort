@@ -124,7 +124,7 @@ namespace ppqsort::impl {
                                                      seq_thr, threads, threadpools);
 
         // first we need to wait for recursive tasks, then we can destroy partition threads
-        threadpools.tasks.stop_and_wait();
-        threadpools.partition.stop_and_wait();
+        threadpools.tasks.wait_and_stop();
+        threadpools.partition.wait_and_stop();
     }
 }

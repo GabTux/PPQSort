@@ -20,11 +20,15 @@ namespace ppqsort::impl::cpp {
 
             ~ThreadPool() {
                 if (!stopped)
-                    stop_and_wait();
+                    wait_and_stop();
             }
 
-            void stop_and_wait() {
-                for (size_t i = 0; i < threads_.size(); ++i) {
+            void wait_and_stop() {
+                // wait for all tasks to finish
+                wait_semaphore_.acquire();
+
+                // send exit signal to all threads and wait for them
+                for (std::size_t i = 0; i < threads_.size(); ++i) {
                     threads_[i].request_stop();
                     threads_tasks_[i].task_semaphore.release();
                     threads_[i].join();
@@ -82,6 +86,10 @@ namespace ppqsort::impl::cpp {
                 while (true) {
                     // sleep until signalled about new tasks
                     threads_tasks_[id].task_semaphore.acquire();
+                    if (stop_token.stop_requested())
+                        break;
+
+                    threads_working_.fetch_add(1, std::memory_order_release);
 
                     // while there are tasks, execute them (mine or stolen)
                     while (task_count_.load(std::memory_order_acquire) > 0) {
@@ -94,11 +102,10 @@ namespace ppqsort::impl::cpp {
                         }
                     }
 
-                    // no tasks left, check if we should finish
-                    if (stop_token.stop_requested())
-                        break;
+                    // check if we were last working thread and eventually signal about all tasks finished
+                    if (threads_working_.fetch_sub(1, std::memory_order_release) == 1)
+                        wait_semaphore_.release();
 
-                    // no tasks left, rotate me to front and sleep
                     rotate_id_to_front(id);
                 }
             }
@@ -106,13 +113,15 @@ namespace ppqsort::impl::cpp {
             struct TaskItem {
                 std::mutex mutex;
                 std::deque<taskType> tasks;
-                std::binary_semaphore task_semaphore{0};
+                std::binary_semaphore task_semaphore{0};    // used to signal about new tasks
             };
 
             std::vector<std::jthread> threads_;
             std::deque<TaskItem> threads_tasks_;
             std::deque<unsigned int> threads_priorities_;
             alignas(parameters::cacheline_size) std::atomic<unsigned int> task_count_{0};
+            alignas(parameters::cacheline_size) std::atomic<unsigned int> threads_working_{0};
+            std::binary_semaphore wait_semaphore_{0};   // used to wait for all tasks to finish
             std::mutex mtx_priority_;
             bool stopped = false;
     };
