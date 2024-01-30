@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 project(PPQSortBenchmark LANGUAGES CXX)
 
 include(../cmake/tools.cmake)
@@ -18,6 +20,44 @@ if(TEST_INSTALLED_VERSION)
 else()
   CPMAddPackage(NAME PPQsort SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 endif()
+
+# ---- Download matrix benchmark data ----
+function(get_matrix_data FILE_URL FILE_NAME)
+  set(TARGET_FILE_NAME ${FILE_NAME}.mtx)
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_FILE_NAME})
+    message(STATUS "${FILE_NAME} already present, using cached version")
+    return()
+  endif()
+  message(STATUS "Downloading ${FILE_NAME} from ${FILE_URL}")
+  file(DOWNLOAD ${FILE_URL} ${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.tar.gz
+    SHOW_PROGRESS
+    STATUS DOWNLOAD_RESULT
+    LOG DOWNLOAD_LOG)
+  list(GET DOWNLOAD_RESULT 0 DOWNLOAD_RESULT_CODE)
+  list(GET DOWNLOAD_RESULT 1 DOWNLOAD_RESULT_STRING)
+  if(NOT DOWNLOAD_RESULT_CODE EQUAL 0)
+    message(FATAL_ERROR "Failed to download ${FILE_NAME}: ${DOWNLOAD_RESULT_STRING}")
+  endif()
+  message(STATUS "Extracting ${FILE_NAME}")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${FILE_NAME}.tar.gz
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      RESULT_VARIABLE EXTRACT_RESULT
+      OUTPUT_VARIABLE EXTRACT_OUTPUT
+      ERROR_VARIABLE EXTRACT_ERROR)
+  if(NOT EXTRACT_RESULT EQUAL 0)
+      message(FATAL_ERROR "Failed to extract ${FILE_NAME}: ${EXTRACT_ERROR}")
+  endif()
+  message(STATUS "Extracted ${FILE_NAME}")
+  # move the mtx file to the root of the directory
+  file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}/${TARGET_FILE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_FILE_NAME})
+  file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.tar.gz)
+  file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}/)
+endfunction()
+
+get_matrix_data("http://sparse-files.engr.tamu.edu/MM/Schenk_AFE/af_shell10.tar.gz" "af_shell10")
+get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/vanHeukelum/cage15.tar.gz" "cage15")
+get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem_hifreq_circuit.tar.gz" "fem_hifreq_circuit")
+
 # ---- Create binary ----
 
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
