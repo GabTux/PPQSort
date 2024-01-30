@@ -14,6 +14,11 @@ CPMAddPackage(
         OPTIONS "BENCHMARK_ENABLE_TESTING Off"
 )
 
+CPMAddPackage(
+        NAME fast_matrix_market
+        GITHUB_REPOSITORY alugowski/fast_matrix_market
+        VERSION 1.7.6
+)
 
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
@@ -64,6 +69,6 @@ file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
 
 find_package(OpenMP)
-target_link_libraries(${PROJECT_NAME} benchmark::benchmark OpenMP::OpenMP_CXX PPQSort::PPQSort)
+target_link_libraries(${PROJECT_NAME} benchmark::benchmark OpenMP::OpenMP_CXX fast_matrix_market::fast_matrix_market PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)

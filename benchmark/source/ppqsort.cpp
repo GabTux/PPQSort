@@ -10,11 +10,11 @@
 #define register_templated_benchmark(fixture, name, sort_signature)                                                    \
 {                                                                                                                      \
     for (auto _ : state) {                                                                                             \
-        Prepare();                                                                                                     \
+        prepare();                                                                                                     \
         auto start = std::chrono::high_resolution_clock::now();                                                        \
         sort_signature;                                                                                                \
         auto end = std::chrono::high_resolution_clock::now();                                                          \
-        Deallocate();                                                                                                  \
+        deallocate();                                                                                                  \
         auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);                 \
         state.SetIterationTime(elapsed_seconds.count());                                                               \
     }                                                                                                                  \
@@ -50,6 +50,14 @@ BENCHMARK_TEMPLATE_DEFINE_F(bench_type##StringVectorFixture,                    
                             prepended)(benchmark::State& state)                                                        \
 register_templated_benchmark(bench_type##StringVectorFixture,                                                          \
                              BM_##sort_name##_##bench_type##_string_##bench_setup, sort_signature)
+
+#define register_matrix_benchmark(sort_signature, sort_name, bench_type, filename, type)                               \
+BENCHMARK_TEMPLATE_DEFINE_F(bench_type##VectorFixture,                                                                 \
+BM_##sort_name##_##bench_type##_##filename,                                                                            \
+filename, type)(benchmark::State& state)                                                                               \
+register_templated_benchmark(bench_type##VectorFixture,                                                                \
+BM_##sort_name##_##bench_type##_##filename, sort_signature)
+
 
 
 #define default_benchmark(sort_signature, sort_name)                                 \
@@ -96,12 +104,19 @@ register_string_benchmark(sort_signature, sort_name, OrganPipe, prepended, true)
 register_string_benchmark(sort_signature, sort_name, Rotated, prepended, true)                                         \
 register_string_benchmark(sort_signature, sort_name, Heap, prepended, true)
 
+
+#define matrix_benchmark(sort_signature, sort_name)                                                                    \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrix, af_shell10, false)                                  \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrix, cage15, false)                                      \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrix, fem_hifreq_circuit, true)
+
 #define complete_benchmark_set(sort_signature, sort_name)                           \
 default_benchmark(sort_signature, sort_name)                                        \
 register_benchmark_default(sort_signature, sort_name, Adversary, int, default);     \
 small_range_benchmark(sort_signature, sort_name)                                    \
 small_size_benchmark(sort_signature, sort_name)                                     \
-string_benchmark(sort_signature, sort_name)
+string_benchmark(sort_signature, sort_name)                                         \
+matrix_benchmark(sort_signature, sort_name)
 
 #define ppqsort_parameters_tuning                                                                                                       \
 register_benchmark_size(ppqsort::sort(ppqsort::execution::par, data.begin(), data.end()), ppqsort_par, Random, short, tuning, 1000000000);  \
@@ -117,5 +132,6 @@ string_benchmark(ppqsort::sort(ppqsort::execution::par_force_branchless, data.be
 //ppqsort_parameters_tuning
 
 // complete sets to compare sorts against each other
-complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data.begin(), data.end()), ppqsort_par);
-complete_benchmark_set(__gnu_parallel::sort(data.begin(), data.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
+//complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par);
+//complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
+matrix_benchmark(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par)
