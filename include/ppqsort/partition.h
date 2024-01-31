@@ -88,7 +88,7 @@ namespace ppqsort::impl {
         typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline std::pair<RandomIt, bool> seq_cleanup(const RandomIt& g_begin, const T& pivot,
                                                  const Compare& comp, const diff_t& g_first_offset,
-                                                 const diff_t& g_last_offset, bool & g_already_partitioned) {
+                                                 const diff_t& g_last_offset, bool g_already_partitioned) {
 
 
         RandomIt final_first = g_begin + g_first_offset - 1;

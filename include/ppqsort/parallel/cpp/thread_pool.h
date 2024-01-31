@@ -45,8 +45,10 @@ namespace ppqsort::impl::cpp {
                 threads_priorities_.push_back(id);
                 priority_lock.unlock();
 
-                task_count_.fetch_add(1, std::memory_order_release);
+                std::unique_lock other_queue_lock(threads_tasks_[id].mutex);
                 threads_tasks_[id].tasks.push_back(std::move(task));
+                other_queue_lock.unlock();
+                task_count_.fetch_add(1, std::memory_order_release);
                 threads_tasks_[id].task_semaphore.release();
             }
 
