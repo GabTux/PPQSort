@@ -12,7 +12,7 @@ namespace ppqsort::impl::cpp {
     template <side s, typename diff_t>
     inline bool get_new_block(diff_t& t_iter, diff_t& t_block_bound, std::atomic<diff_t>& g_distance,
                               std::atomic_ref<diff_t>& g_offset, const int& block_size) {
-        const diff_t t_size = std::atomic_fetch_sub_explicit(&g_distance, block_size, std::memory_order_acq_rel);
+        const diff_t t_size = g_distance.fetch_sub(block_size, std::memory_order_acq_rel);
         if (t_size < block_size) {
             // last block not aligned, no new blocks available
             g_distance.fetch_add(block_size, std::memory_order_acq_rel);
@@ -37,11 +37,11 @@ namespace ppqsort::impl::cpp {
     {
         const int t_dirty_blocks = g_dirty_blocks_side.load(std::memory_order_relaxed);
         diff_t swap_start = -1;
-        bool expected = false;
         for (int i = 0; i < t_dirty_blocks; ++i) {
             // find clean block in dirty segment
             bool t_reserve_success = false;
             if (reserved[i].load(std::memory_order_acquire) == false) {
+                bool expected = false;
                 t_reserve_success = reserved[i].compare_exchange_strong(expected, true,
                                                                         std::memory_order_release,
                                                                         std::memory_order_relaxed);
