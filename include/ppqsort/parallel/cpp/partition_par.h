@@ -12,18 +12,18 @@ namespace ppqsort::impl::cpp {
     template <side s, typename diff_t>
     inline bool get_new_block(diff_t& t_iter, diff_t& t_block_bound, std::atomic<diff_t>& g_distance,
                               std::atomic_ref<diff_t>& g_offset, const int& block_size) {
-        const diff_t t_size = g_distance.fetch_sub(block_size, std::memory_order_acq_rel);
+        const diff_t t_size = g_distance.fetch_sub(block_size, std::memory_order_relaxed);
         if (t_size < block_size) {
             // last block not aligned, no new blocks available
-            g_distance.fetch_add(block_size, std::memory_order_acq_rel);
+            g_distance.fetch_add(block_size, std::memory_order_relaxed);
             return false;
         }
         // else get new block
         if constexpr (s == left) {
-            t_iter = g_offset.fetch_add(block_size, std::memory_order_acq_rel);
+            t_iter = g_offset.fetch_add(block_size, std::memory_order_relaxed);
             t_block_bound = t_iter + (block_size - 1);
         } else {
-            t_iter = g_offset.fetch_sub(block_size, std::memory_order_acq_rel);
+            t_iter = g_offset.fetch_sub(block_size, std::memory_order_relaxed);
             t_block_bound = t_iter - (block_size - 1);
         }
         return true;
