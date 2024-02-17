@@ -101,7 +101,7 @@ namespace ppqsort::impl {
             typename T = typename std::iterator_traits<RandomIt>::value_type,
             typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
     inline void seq_loop(RandomIt begin, RandomIt end, Compare comp, diff_t bad_allowed, bool leftmost = true) {
-        constexpr const int insertion_threshold = branchless ?
+        constexpr int insertion_threshold = branchless ?
                                                   parameters::insertion_threshold_primitive
                                                   : parameters::insertion_threshold;
 

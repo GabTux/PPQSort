@@ -26,6 +26,9 @@ namespace ppqsort::impl {
                                               : parameters::insertion_threshold;
             while (true) {
                 diff_t size = end - begin;
+                if (size < seq_thr) {
+                    return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, bad_allowed, leftmost);
+                }
 
                 if (size < insertion_threshold) {
                     if (leftmost)
@@ -90,15 +93,12 @@ namespace ppqsort::impl {
                     _deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
                 }
 
-                if (size > seq_thr) {
-                    threads >>= 1;
-                    thread_pools.tasks.push_task([begin, pivot_pos, comp, bad_allowed, seq_thr,
-                                                  threads, &thread_pools, leftmost] {
-                        par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp,
-                            bad_allowed, seq_thr, threads, thread_pools, leftmost); });
-                } else {
-                    seq_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, leftmost);
-                }
+                threads >>= 1;
+                thread_pools.tasks.push_task([begin, pivot_pos, comp, bad_allowed, seq_thr,
+                                              threads, &thread_pools, leftmost] {
+                    par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp,
+                                                            bad_allowed, seq_thr, threads, thread_pools, leftmost);
+                });
                 leftmost = false;
                 begin = ++pivot_pos;
             }
