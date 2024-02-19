@@ -132,6 +132,5 @@ string_benchmark(ppqsort::sort(ppqsort::execution::par_force_branchless, data.be
 //ppqsort_parameters_tuning
 
 // complete sets to compare sorts against each other
-//complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par);
-//complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
-matrix_benchmark(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par)
+complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par);
+complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
