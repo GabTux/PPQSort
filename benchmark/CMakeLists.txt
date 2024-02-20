@@ -20,6 +20,14 @@ CPMAddPackage(
         VERSION 1.7.6
 )
 
+CPMAddPackage(
+        NAME Boost
+        VERSION 1.84.0
+        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+        URL_HASH SHA256=2e64e5d79a738d0fa6fb546c6e5c2bd28f88d268a2a080546f74e5ff98f29d0e
+        OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES sort"
+)
+
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
 else()
@@ -63,12 +71,17 @@ get_matrix_data("http://sparse-files.engr.tamu.edu/MM/Schenk_AFE/af_shell10.tar.
 get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/vanHeukelum/cage15.tar.gz" "cage15")
 get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem_hifreq_circuit.tar.gz" "fem_hifreq_circuit")
 
+# also possible to use CPMAddPackage, but it will not remove the archive after extraction
+#CPMAddPackage("http://sparse-files.engr.tamu.edu/MM/Schenk_AFE/af_shell10.tar.gz")
+#CPMAddPackage("https://suitesparse-collection-website.herokuapp.com/MM/vanHeukelum/cage15.tar.gz")
+#CPMAddPackage("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem_hifreq_circuit.tar.gz")
+
 # ---- Create binary ----
 
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
 
 find_package(OpenMP)
-target_link_libraries(${PROJECT_NAME} benchmark::benchmark OpenMP::OpenMP_CXX fast_matrix_market::fast_matrix_market PPQSort::PPQSort)
+target_link_libraries(${PROJECT_NAME} benchmark::benchmark OpenMP::OpenMP_CXX fast_matrix_market::fast_matrix_market Boost::sort PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)

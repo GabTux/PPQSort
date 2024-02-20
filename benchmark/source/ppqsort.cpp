@@ -1,4 +1,5 @@
 #include <benchmark/benchmark.h>
+#include <boost/sort/sort.hpp>
 #include <vector>
 #include <ppqsort.h>
 #include <chrono>
@@ -134,3 +135,4 @@ string_benchmark(ppqsort::sort(ppqsort::execution::par_force_branchless, data.be
 // complete sets to compare sorts against each other
 complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par);
 complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
+complete_benchmark_set(boost::sort::block_indirect_sort(data_.begin(), data_.end()), block_indirect_sort);
