@@ -5,13 +5,15 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+export CPM_SOURCE_CACHE=$HOME/.cache/CPM
+
 function build_standalone() {
     cmake -S standalone -B build/standalone -DCMAKE_BUILD_TYPE=Release
     cmake --build build/standalone
 }
 
 function build_test() {
-    cmake -S test -B build/test -DENABLE_COMPILER_WARNINGS=ON
+    cmake -S test -B build/test -DUSE_SANITIZER=Address
     cmake --build build/test -j"$(nproc)"
 }
 
