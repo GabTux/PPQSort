@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif ()
 
 project(PPQSortBenchmark LANGUAGES CXX)
 
@@ -27,6 +29,14 @@ CPMAddPackage(
         URL_HASH SHA256=2e64e5d79a738d0fa6fb546c6e5c2bd28f88d268a2a080546f74e5ff98f29d0e
         OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES sort"
 )
+
+CPMAddPackage(
+        NAME oneTBB
+        GITHUB_REPOSITORY oneapi-src/oneTBB
+        VERSION 2021.11.0
+        OPTIONS "TBB_TEST OFF"
+)
+
 
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
@@ -82,6 +92,12 @@ file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
 
 find_package(OpenMP)
-target_link_libraries(${PROJECT_NAME} benchmark::benchmark OpenMP::OpenMP_CXX fast_matrix_market::fast_matrix_market Boost::sort PPQSort::PPQSort)
+target_link_libraries(${PROJECT_NAME}
+        benchmark::benchmark
+        OpenMP::OpenMP_CXX
+        fast_matrix_market::fast_matrix_market
+        Boost::sort
+        TBB::tbb
+        PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
