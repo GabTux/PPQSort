@@ -4,6 +4,11 @@
 #include <ppqsort.h>
 #include <chrono>
 #include <parallel/algorithm>
+
+#include <oneapi/tbb.h>
+#include <poolstl/poolstl.hpp>
+
+
 #include "fixtures.h"
 
 #define str(X) #X
@@ -136,3 +141,6 @@ string_benchmark(ppqsort::sort(ppqsort::execution::par_force_branchless, data.be
 complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par);
 complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs);
 complete_benchmark_set(boost::sort::block_indirect_sort(data_.begin(), data_.end()), block_indirect_sort);
+complete_benchmark_set(std::sort(std::execution::par, data_.begin(), data_.end()), std_sort_par);
+complete_benchmark_set(std::sort(poolstl::par, data_.begin(), data_.end()), poolstl_sort_par);
+complete_benchmark_set(tbb::parallel_sort(data_.begin(), data_.end()), tbb_parallel_sort);

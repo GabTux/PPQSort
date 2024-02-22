@@ -37,6 +37,29 @@ CPMAddPackage(
         OPTIONS "TBB_TEST OFF"
 )
 
+CPMAddPackage(
+        NAME poolSTL
+        GITHUB_REPOSITORY alugowski/poolSTL
+        VERSION 0.3.5
+        DOWNLOAD_ONLY
+)
+
+CPMAddPackage(
+        NAME cpp11sort
+        GITLAB_REPOSITORY daniel.langr/cpp11sort
+        GIT_TAG master
+        DOWNLOAD_ONLY
+)
+include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${cpp11sort_SOURCE_DIR}/include>)
+
+CPMAddPackage(
+        NAME AQsort
+        GITHUB_REPOSITORY DanielLangr/AQsort
+        GIT_TAG master
+        DOWNLOAD_ONLY
+)
+include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${AQsort_SOURCE_DIR}/include>)
+
 
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
@@ -98,6 +121,7 @@ target_link_libraries(${PROJECT_NAME}
         fast_matrix_market::fast_matrix_market
         Boost::sort
         TBB::tbb
+        poolSTL::poolSTL
         PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
