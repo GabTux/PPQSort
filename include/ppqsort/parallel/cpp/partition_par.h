@@ -40,10 +40,10 @@ namespace ppqsort::impl::cpp {
         for (int i = 0; i < t_dirty_blocks; ++i) {
             // find clean block in dirty segment
             bool t_reserve_success = false;
-            if (reserved[i].load(std::memory_order_acquire) == false) {
+            if (reserved[i].load(std::memory_order_relaxed) == false) {
                 bool expected = false;
                 t_reserve_success = reserved[i].compare_exchange_strong(expected, true,
-                                                                        std::memory_order_release,
+                                                                        std::memory_order_relaxed,
                                                                         std::memory_order_relaxed);
             }
             if (t_reserve_success) {
