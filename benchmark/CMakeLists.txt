@@ -45,6 +45,12 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
+        NAME CCCL
+        GITHUB_REPOSITORY NVIDIA/cccl
+        GIT_TAG origin/main
+)
+
+CPMAddPackage(
         NAME cpp11sort
         GITLAB_REPOSITORY daniel.langr/cpp11sort
         GIT_TAG master
@@ -122,6 +128,7 @@ target_link_libraries(${PROJECT_NAME}
         Boost::sort
         TBB::tbb
         poolSTL::poolSTL
+        CCCL::CCCL
         PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)

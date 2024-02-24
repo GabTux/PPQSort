@@ -4,10 +4,12 @@
 #include <ppqsort.h>
 #include <chrono>
 #include <parallel/algorithm>
-
 #include <oneapi/tbb.h>
 #include <poolstl/poolstl.hpp>
-
+#undef THRUST_DEVICE_SYSTEM
+#define THRUST_DEVICE_SYSTEM THRUST_DEVICE_SYSTEM_CPP
+#include <thrust/sort.h>
+#include <thrust/execution_policy.h>
 
 #include "fixtures.h"
 
@@ -144,3 +146,4 @@ complete_benchmark_set(boost::sort::block_indirect_sort(data_.begin(), data_.end
 complete_benchmark_set(std::sort(std::execution::par, data_.begin(), data_.end()), std_sort_par);
 complete_benchmark_set(std::sort(poolstl::par, data_.begin(), data_.end()), poolstl_sort_par);
 complete_benchmark_set(tbb::parallel_sort(data_.begin(), data_.end()), tbb_parallel_sort);
+complete_benchmark_set(thrust::sort(thrust::host, data_.begin(), data_.end()), thrust_device_sort);
