@@ -90,13 +90,11 @@ message(STATUS "Adding MPQsort")
 FetchContent_Declare(
         MPQsort
         URL https://raw.githubusercontent.com/voronond/MPQsort/eaeda34d19b24fffc04af45e929a1ce769b72a4d/include/mpqsort/mpqsort.h
+        URL_HASH SHA256=ace123ad88808743ac714b116d59c964b45a67170a224d201407ff67bccd8647
         DOWNLOAD_NO_EXTRACT TRUE
         DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpqsort
 )
-FetchContent_GetProperties(MPQsort)
-if(NOT MPQsort_POPULATED)
-  FetchContent_Populate(MPQsort)
-endif()
+FetchContent_MakeAvailable(MPQsort)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/mpqsort)
 
 # add openmp
