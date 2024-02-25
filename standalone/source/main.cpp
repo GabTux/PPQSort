@@ -18,13 +18,13 @@ int main() {
     }
     std::vector input_std(input);
 
-    TIME_MEASURE_START(ppqsort_time_par);
+    MEASURE_START(ppqsort_time_par);
     ppqsort::sort(ppqsort::execution::par, input.begin(), input.end());
-    TIME_MEASURE_END(ppqsort_time_par, "Parallel PPQSort time");
+    MEASURE_END(ppqsort_time_par, "Parallel PPQSort time");
 
-    TIME_MEASURE_START(ppqsort_time);
+    MEASURE_START(ppqsort_time);
     std::sort(std::execution::par, input_std.begin(), input_std.end());
-    TIME_MEASURE_END(ppqsort_time, "Parallel std_sort time");
+    MEASURE_END(ppqsort_time, "std_sort time");
 
     std::cout << "sorted: ";
     for (int i = 0; i < max_size; ++i) {
@@ -51,8 +51,8 @@ int main() {
     }
 
     // enforce branchless variant for strings
-    TIME_MEASURE_START(ppqsort_time_par_str);
+    MEASURE_START(ppqsort_time_par_str);
     ppqsort::sort(ppqsort::execution::par_force_branchless, input_str.begin(), input_str.end());
-    TIME_MEASURE_END(ppqsort_time_par_str, "Parallel PPQSort time string");
+    MEASURE_END(ppqsort_time_par_str, "Parallel PPQSort time string");
     return !std::ranges::is_sorted(input_str);
 }

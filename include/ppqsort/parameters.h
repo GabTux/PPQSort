@@ -11,7 +11,7 @@
     #include <iostream>
     #include <syncstream>
     #define TO_S(val) std::to_string(val)
-    #define PRINT_ITERS(lp, rp, msg)                                   \
+    #define PRINT_ITERATORS(lp, rp, msg)                               \
         std::cout << msg << ": ";                                      \
         for (auto i = lp; i != (rp - 1); ++i) std::cout << *i << ", "; \
         std::cout << *(rp - 1) << std::endl;
@@ -26,7 +26,7 @@
         std::osyncstream(std::cout) << str << std::endl;
 #else
     #define TO_S(val)
-    #define PRINT_ITERS(lp, rp, msg)
+    #define PRINT_ITERATORS(lp, rp, msg)
     #define PRINT_ATOMIC_OMP(id, str)
     #define PRINT_VAL(str, val)
     #define PRINT_BIN(str, val)
@@ -36,15 +36,15 @@
 
 #ifdef TIME_MEASURE
     #include <chrono>
-    #define TIME_MEASURE_START(name) \
+    #define MEASURE_START(name) \
         const std::chrono::steady_clock::time_point name = std::chrono::steady_clock::now();
-    #define TIME_MEASURE_END(name, msg)                                                                             \
+    #define MEASURE_END(name, msg)                                                                             \
         const std::chrono::steady_clock::time_point end_##name = std::chrono::steady_clock::now();                  \
         std::cout << msg << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end_##name - name).count() \
                   << " ms" << std::endl
 #else
-    #define TIME_MEASURE_START(name)
-    #define TIME_MEASURE_END(name_start, name_end, msg)
+    #define MEASURE_START(name)
+    #define MEASURE_END(name_start, name_end, msg)
 #endif
 
 namespace ppqsort::parameters {
