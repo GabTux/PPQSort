@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-endif ()
-
 project(PPQSortBenchmark LANGUAGES CXX)
 
 include(../cmake/tools.cmake)
@@ -65,6 +61,8 @@ CPMAddPackage(
         GIT_TAG d7a74abb47c1913ddc6d6eeca68e59c747ddb693
         OPTIONS "IPS4O_OPTIMIZE_FOR_NATIVE OFF" "IPS4O_DISABLE_PARALLEL ON" "IPS4O_USE_MCX16 OFF"
 )
+target_link_libraries(ips4o INTERFACE TBB::tbb atomic)
+set_target_properties(ips4o PROPERTIES CXX_STANDARD 14)
 
 # no release tags, using latest commit hash
 CPMAddPackage(
@@ -156,7 +154,6 @@ target_link_libraries(${PROJECT_NAME}
         poolSTL::poolSTL
         CCCL::CCCL
         ips4o
-        atomic
         PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
