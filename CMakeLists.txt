@@ -40,10 +40,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 # being a cross-platform target, we enforce standards conformance on MSVC
 target_compile_options(${PROJECT_NAME} INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
-# Link dependencies
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
+# ---- Options ----
+
+option(PPQSORT_OPTIMIZE_NATIVE "Build with -march=native" OFF)
+if(PPQSORT_OPTIMIZE_NATIVE)
+  target_compile_options(${PROJECT_NAME} INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,GNU,Clang>:-march=native>")
+endif()
+message(STATUS "PPQSORT_OPTIMIZE_NATIVE: ${PPQSORT_OPTIMIZE_NATIVE}")
+
+# Link against the standard library by default
+option(PPQSORT_USE_OPENMP "Build with openmp, otherwise use native threads" OFF)
+if(PPQSORT_USE_OPENMP)
+  find_package(OpenMP REQUIRED)
   target_link_libraries(${PROJECT_NAME} INTERFACE OpenMP::OpenMP_CXX)
+else()
+  find_package(Threads REQUIRED)
+  target_link_libraries(${PROJECT_NAME} INTERFACE Threads::Threads)
 endif()
 
 target_include_directories(
