@@ -8,8 +8,13 @@
 #include <poolstl/poolstl.hpp>
 #undef THRUST_DEVICE_SYSTEM
 #define THRUST_DEVICE_SYSTEM THRUST_DEVICE_SYSTEM_CPP
+#undef THRUST_HOST_SYSTEM
+#define THRUST_HOST_SYSTEM_TBB
 #include <thrust/sort.h>
 #include <thrust/execution_policy.h>
+#include <cpp11sort.h>
+#include <mpqsort.h>
+#include <ips4o.hpp>
 
 #include "fixtures.h"
 
@@ -147,3 +152,5 @@ complete_benchmark_set(std::sort(std::execution::par, data_.begin(), data_.end()
 complete_benchmark_set(std::sort(poolstl::par, data_.begin(), data_.end()), poolstl_sort_par);
 complete_benchmark_set(tbb::parallel_sort(data_.begin(), data_.end()), tbb_parallel_sort);
 complete_benchmark_set(thrust::sort(thrust::host, data_.begin(), data_.end()), thrust_device_sort);
+//yet buggy: complete_benchmark_set(cpp11sort::sort(data_.begin(), data_.end()), cpp11sort_par);
+complete_benchmark_set(ips4o::parallel::sort(data_.begin(), data_.end()), ips4o);

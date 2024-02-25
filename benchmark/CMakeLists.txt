@@ -9,6 +9,12 @@ project(PPQSortBenchmark LANGUAGES CXX)
 include(../cmake/tools.cmake)
 include(../cmake/CPM.cmake)
 
+if(TEST_INSTALLED_VERSION)
+  find_package(PPQsort REQUIRED)
+else()
+  CPMAddPackage(NAME PPQsort SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+endif()
+
 CPMAddPackage(
         NAME benchmark
         GITHUB_REPOSITORY google/benchmark
@@ -47,31 +53,55 @@ CPMAddPackage(
 CPMAddPackage(
         NAME CCCL
         GITHUB_REPOSITORY NVIDIA/cccl
-        GIT_TAG origin/main
+        VERSION 2.3.1
 )
 
+# disable some options now, to just include the library but do not build it
+# we will include the header files and link it properly after
+# no release tags, using latest commit hash
+CPMAddPackage(
+        NAME IPS4o
+        GITHUB_REPOSITORY ips4o/ips4o
+        GIT_TAG d7a74abb47c1913ddc6d6eeca68e59c747ddb693
+        OPTIONS "IPS4O_OPTIMIZE_FOR_NATIVE OFF" "IPS4O_DISABLE_PARALLEL ON" "IPS4O_USE_MCX16 OFF"
+)
+
+# no release tags, using latest commit hash
 CPMAddPackage(
         NAME cpp11sort
         GITLAB_REPOSITORY daniel.langr/cpp11sort
-        GIT_TAG master
+        GIT_TAG 0aa1607cf6906dd201247d864abd80c9cf123872
         DOWNLOAD_ONLY
 )
 include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${cpp11sort_SOURCE_DIR}/include>)
 
+# no release tags, using latest commit hash
 CPMAddPackage(
         NAME AQsort
         GITHUB_REPOSITORY DanielLangr/AQsort
-        GIT_TAG master
+        GIT_TAG 2e73e4854c72b8a7a2065cdf5da3f506eaa79d14
         DOWNLOAD_ONLY
 )
 include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${AQsort_SOURCE_DIR}/include>)
 
-
-if(TEST_INSTALLED_VERSION)
-  find_package(PPQsort REQUIRED)
-else()
-  CPMAddPackage(NAME PPQsort SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+# MPQsort is single header library, so it is downloaded directly, without cloning whole repository
+# no release tags, using latest commit hash from Jan 27, 2024
+message(STATUS "Adding MPQsort")
+FetchContent_Declare(
+        MPQsort
+        URL https://raw.githubusercontent.com/voronond/MPQsort/eaeda34d19b24fffc04af45e929a1ce769b72a4d/include/mpqsort/mpqsort.h
+        DOWNLOAD_NO_EXTRACT TRUE
+        DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpqsort
+)
+FetchContent_GetProperties(MPQsort)
+if(NOT MPQsort_POPULATED)
+  FetchContent_Populate(MPQsort)
 endif()
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/mpqsort)
+
+# add openmp
+find_package(OpenMP REQUIRED)
+
 
 # ---- Download matrix benchmark data ----
 function(get_matrix_data FILE_URL FILE_NAME)
@@ -119,8 +149,6 @@ get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem
 
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
-
-find_package(OpenMP)
 target_link_libraries(${PROJECT_NAME}
         benchmark::benchmark
         OpenMP::OpenMP_CXX
@@ -129,6 +157,8 @@ target_link_libraries(${PROJECT_NAME}
         TBB::tbb
         poolSTL::poolSTL
         CCCL::CCCL
+        ips4o
+        atomic
         PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
