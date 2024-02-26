@@ -9,7 +9,8 @@ namespace ppqsort::impl {
 
         struct ThreadPools {
             cpp::ThreadPool<> partition;
-            cpp::ThreadPool<> tasks;
+            // master thread also works --> create one less thread
+            cpp::ThreadPool<> tasks = cpp::ThreadPool(std::jthread::hardware_concurrency()-1);
         };
 
         namespace cpp {
@@ -114,7 +115,7 @@ namespace ppqsort::impl {
         if (begin == end)
             return;
         constexpr bool branchless = Force_branchless || Branchless;
-        int threads = static_cast<int>(std::thread::hardware_concurrency());
+        int threads = static_cast<int>(std::jthread::hardware_concurrency());
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
 
 

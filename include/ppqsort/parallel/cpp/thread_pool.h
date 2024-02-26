@@ -10,7 +10,7 @@ namespace ppqsort::impl::cpp {
         public:
             ThreadPool(ThreadPool&) = delete;
 
-            explicit ThreadPool(const unsigned int threads_count = std::thread::hardware_concurrency()) :
+            explicit ThreadPool(const unsigned int threads_count = std::jthread::hardware_concurrency()) :
             threads_tasks_(threads_count) {
                 for (unsigned int i = 0; i < threads_count; ++i) {
                     threads_priorities_.emplace_back(i);
@@ -24,15 +24,18 @@ namespace ppqsort::impl::cpp {
             }
 
             void wait_and_stop() {
-                // wait for all tasks to finish
-                wait_semaphore_.acquire();
+                // the queue can be empty, but any running task can generate new tasks
+                // first wait for all tasks to finish
+                if (threads_working_count_.load(std::memory_order_acquire) > 0)
+                    threads_done_semaphore_.acquire();
 
                 // send exit signal to all threads and wait for them
                 for (std::size_t i = 0; i < threads_.size(); ++i) {
                     threads_[i].request_stop();
                     threads_tasks_[i].task_semaphore.release();
-                    threads_[i].join();
                 }
+                for (auto& thread : threads_)
+                    thread.join();
                 stopped = true;
             }
 
@@ -91,7 +94,7 @@ namespace ppqsort::impl::cpp {
                     if (stop_token.stop_requested())
                         break;
 
-                    threads_working_.fetch_add(1, std::memory_order_release);
+                    threads_working_count_.fetch_add(1, std::memory_order_acquire);
 
                     // while there are tasks, execute them (mine or stolen)
                     while (task_count_.load(std::memory_order_acquire) > 0) {
@@ -105,8 +108,8 @@ namespace ppqsort::impl::cpp {
                     }
 
                     // check if we were last working thread and eventually signal about all tasks finished
-                    if (threads_working_.fetch_sub(1, std::memory_order_release) == 1)
-                        wait_semaphore_.release();
+                    if (threads_working_count_.fetch_sub(1, std::memory_order_release) == 1)
+                        threads_done_semaphore_.release();
 
                     rotate_id_to_front(id);
                 }
@@ -122,8 +125,8 @@ namespace ppqsort::impl::cpp {
             std::deque<TaskItem> threads_tasks_;
             std::deque<unsigned int> threads_priorities_;
             alignas(parameters::cacheline_size) std::atomic<unsigned int> task_count_{0};
-            alignas(parameters::cacheline_size) std::atomic<unsigned int> threads_working_{0};
-            std::binary_semaphore wait_semaphore_{0};   // used to wait for all tasks to finish
+            alignas(parameters::cacheline_size) std::atomic<unsigned int> threads_working_count_{0};
+            std::binary_semaphore threads_done_semaphore_{0};   // used to wait for all tasks to finish
             std::mutex mtx_priority_;
             bool stopped = false;
     };
