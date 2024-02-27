@@ -25,9 +25,11 @@ namespace ppqsort::impl::cpp {
 
             void wait_and_stop() {
                 // the queue can be empty, but any running task can generate new tasks
-                // first wait for all tasks to finish
-                if (threads_working_count_.load(std::memory_order_acquire) > 0)
-                    threads_done_semaphore_.acquire();
+                // check if there are any tasks in queue or being executed, if not we can peacefully stop
+                // otherwise, wait for signal
+                // after the last thread is finished, it will signal that all threads are done
+                if (handling_tasks_.load(std::memory_order_acquire) > 0)
+                        threads_done_semaphore_.acquire();
 
                 // send exit signal to all threads and wait for them
                 for (std::size_t i = 0; i < threads_.size(); ++i) {
@@ -51,7 +53,8 @@ namespace ppqsort::impl::cpp {
                 std::unique_lock other_queue_lock(threads_tasks_[id].mutex);
                 threads_tasks_[id].tasks.push_back(std::move(task));
                 other_queue_lock.unlock();
-                task_count_.fetch_add(1, std::memory_order_release);
+                pending_tasks_.fetch_add(1, std::memory_order_release);
+                handling_tasks_.fetch_add(1, std::memory_order_release);
                 threads_tasks_[id].task_semaphore.release();
             }
 
@@ -60,8 +63,9 @@ namespace ppqsort::impl::cpp {
                 auto task = std::move(threads_tasks_[id].tasks.front());
                 threads_tasks_[id].tasks.pop_front();
                 my_queue_lock.unlock();
-                task_count_.fetch_sub(1, std::memory_order_release);
+                pending_tasks_.fetch_sub(1, std::memory_order_release);
                 task();
+                handling_tasks_.fetch_sub(1, std::memory_order_release);
             }
 
             void try_to_steal_task(const unsigned int id) {
@@ -72,8 +76,9 @@ namespace ppqsort::impl::cpp {
                         auto task = std::move(threads_tasks_[i].tasks.front());
                         threads_tasks_[i].tasks.pop_front();
                         other_queue_lock.unlock();
-                        task_count_.fetch_sub(1, std::memory_order_release);
+                        pending_tasks_.fetch_sub(1, std::memory_order_release);
                         task();
+                        handling_tasks_.fetch_sub(1, std::memory_order_release);
                         return;
                     }
                 }
@@ -94,10 +99,8 @@ namespace ppqsort::impl::cpp {
                     if (stop_token.stop_requested())
                         break;
 
-                    threads_working_count_.fetch_add(1, std::memory_order_acquire);
-
                     // while there are tasks, execute them (mine or stolen)
-                    while (task_count_.load(std::memory_order_acquire) > 0) {
+                    while (pending_tasks_.load(std::memory_order_acquire) > 0) {
                         std::unique_lock my_queue_lock(threads_tasks_[id].mutex);
                         if (!threads_tasks_[id].tasks.empty()) {
                             get_next_task(my_queue_lock, id);
@@ -108,7 +111,7 @@ namespace ppqsort::impl::cpp {
                     }
 
                     // check if we were last working thread and eventually signal about all tasks finished
-                    if (threads_working_count_.fetch_sub(1, std::memory_order_release) == 1)
+                    if (handling_tasks_.load(std::memory_order_acquire) == 0)
                         threads_done_semaphore_.release();
 
                     rotate_id_to_front(id);
@@ -124,8 +127,8 @@ namespace ppqsort::impl::cpp {
             std::vector<std::jthread> threads_;
             std::deque<TaskItem> threads_tasks_;
             std::deque<unsigned int> threads_priorities_;
-            alignas(parameters::cacheline_size) std::atomic<unsigned int> task_count_{0};
-            alignas(parameters::cacheline_size) std::atomic<unsigned int> threads_working_count_{0};
+            alignas(parameters::cacheline_size) std::atomic<unsigned int> pending_tasks_{0};
+            alignas(parameters::cacheline_size) std::atomic<unsigned int> handling_tasks_{0};
             std::binary_semaphore threads_done_semaphore_{0};   // used to wait for all tasks to finish
             std::mutex mtx_priority_;
             bool stopped = false;
