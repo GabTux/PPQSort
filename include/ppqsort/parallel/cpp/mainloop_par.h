@@ -10,7 +10,7 @@ namespace ppqsort::impl {
         struct ThreadPools {
             cpp::ThreadPool<> partition;
             // master thread also works --> create one less thread
-            cpp::ThreadPool<> tasks = cpp::ThreadPool(std::jthread::hardware_concurrency()-1);
+            cpp::ThreadPool<> tasks = cpp::ThreadPool(std::jthread::hardware_concurrency());
         };
 
         namespace cpp {
@@ -120,9 +120,11 @@ namespace ppqsort::impl {
 
 
         ThreadPools threadpools;
-        cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
-                                                     log2(end - begin),
-                                                     seq_thr, threads, threadpools);
+        threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
+            cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
+                      log2(end - begin),
+                      seq_thr, threads, threadpools);
+        });
 
         // first we need to wait for recursive tasks, then we can destroy partition threads
         threadpools.tasks.wait_and_stop();

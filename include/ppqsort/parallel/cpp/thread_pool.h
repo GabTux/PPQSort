@@ -23,11 +23,15 @@ namespace ppqsort::impl::cpp {
                     wait_and_stop();
             }
 
+            /**
+             * \brief Wait for all tasks to finish and stop the threads.
+             *        After this call returns, the thread pool is not usable anymore.
+             */
             void wait_and_stop() {
                 // the queue can be empty, but any running task can generate new tasks
                 // check if there are any tasks in queue or being executed, if not we can peacefully stop
                 // otherwise, wait for signal
-                // after the last thread is finished, it will signal that all threads are done
+                // after the last thread is finished, it will signal that all tasks are finished
                 if (handling_tasks_.load(std::memory_order_acquire) > 0)
                         threads_done_semaphore_.acquire();
 
@@ -96,8 +100,6 @@ namespace ppqsort::impl::cpp {
                 while (true) {
                     // sleep until signalled about new tasks
                     threads_tasks_[id].task_semaphore.acquire();
-                    if (stop_token.stop_requested())
-                        break;
 
                     // while there are tasks, execute them (mine or stolen)
                     while (pending_tasks_.load(std::memory_order_acquire) > 0) {
@@ -113,6 +115,9 @@ namespace ppqsort::impl::cpp {
                     // check if we were last working thread and eventually signal about all tasks finished
                     if (handling_tasks_.load(std::memory_order_acquire) == 0)
                         threads_done_semaphore_.release();
+
+                    if (stop_token.stop_requested())
+                        break;
 
                     rotate_id_to_front(id);
                 }
