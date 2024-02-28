@@ -21,7 +21,7 @@ namespace ppqsort::impl {
                                                         is_default_comparator<std::decay_t<Compare>>::value>;
 
     template <typename RandomIt, typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
-    inline void _deterministic_shuffle(RandomIt begin, RandomIt end, const diff_t l_size, const diff_t r_size,
+    inline void deterministic_shuffle(RandomIt begin, RandomIt end, const diff_t l_size, const diff_t r_size,
                                        RandomIt pivot_pos, const int insertion_threshold) {
         if (l_size >= insertion_threshold) {
             std::iter_swap(begin,             begin + l_size / 4);
@@ -110,9 +110,9 @@ namespace ppqsort::impl {
 
             if (size <= insertion_threshold) {
                 if (leftmost)
-                    _insertion_sort(begin, end, comp);
+                    insertion_sort(begin, end, comp);
                 else
-                    _insertion_sort_unguarded(begin, end, comp);
+                    insertion_sort_unguarded(begin, end, comp);
                 return;
             }
 
@@ -137,24 +137,21 @@ namespace ppqsort::impl {
                 bool left = false;
                 bool right = false;
                 if (l_size > insertion_threshold)
-                    left = _partial_insertion_sort(begin, pivot_pos, comp);
+                    left = leftmost ? partial_insertion_sort(begin, pivot_pos, comp) : partial_insertion_sort_unguarded(begin, pivot_pos, comp);
                 if (r_size > insertion_threshold)
-                    right = _partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
+                    right = partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
                 if (left && right) {
                     return;
-                } else if (left) {
+                } if (left) {
                     begin = ++pivot_pos;
                     continue;
-                } else if (right) {
+                } if (right) {
                     end = pivot_pos;
                     continue;
                 }
             }
 
-            const bool highly_unbalanced = l_size < (size / parameters::partition_ratio) ||
-                                     r_size < (size / parameters::partition_ratio);
-
-            if (highly_unbalanced) {
+            if (l_size < (size / parameters::partition_ratio) || r_size < (size / parameters::partition_ratio)) {
                 // If we had too many bad partitions, switch to heapsort to guarantee O(n log n)
                 if (--bad_allowed == 0) {
                     std::make_heap(begin, end, comp);
@@ -162,7 +159,7 @@ namespace ppqsort::impl {
                     return;
                 }
 
-                _deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
+                deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
             }
 
             seq_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, leftmost);

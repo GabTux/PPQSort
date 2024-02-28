@@ -9,6 +9,25 @@
 namespace ppqsort::impl {
 
     namespace openmp {
+        template <typename RandomIt, typename Compare>
+        bool is_sorted_par(RandomIt begin, RandomIt end, Compare comp,
+                           const std::size_t size, const int n_threads, bool leftmost) {
+            if (n_threads < 2)
+                return leftmost ? partial_insertion_sort(begin, end, comp) : partial_insertion_sort_unguarded(begin, end, comp);
+
+            std::vector<uint8_t> sorted(n_threads);
+            #pragma omp parallel num_threads(n_threads)
+            {
+                const int tid = omp_get_thread_num();
+                const std::size_t chunk_size = (size + n_threads - 1) / n_threads;
+                const std::size_t my_begin = tid * chunk_size;
+                const std::size_t my_end = std::min(my_begin + chunk_size + 1, size);
+                sorted[tid] = std::is_sorted(begin + my_begin, begin + my_end, comp);
+            }
+            return std::all_of(sorted.begin(), sorted.end(), [](const uint8_t x) { return x; });
+        }
+
+
         template <typename RandomIt, typename Compare,
                   bool branchless,
                   typename T = typename std::iterator_traits<RandomIt>::value_type,
@@ -17,21 +36,17 @@ namespace ppqsort::impl {
                              diff_t bad_allowed, diff_t seq_thr, int threads,
                              bool leftmost = true)
         {
-            constexpr const int insertion_threshold = branchless ?
-                                                      parameters::insertion_threshold_primitive
-                                                      : parameters::insertion_threshold;
+            constexpr int insertion_threshold = branchless ?
+                                                parameters::insertion_threshold_primitive
+                                                : parameters::insertion_threshold;
 
             while (true) {
                 diff_t size = end - begin;
-                if (size < seq_thr) {
+                if (size < seq_thr)
                     return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, bad_allowed, leftmost);
-                }
 
                 if (size < insertion_threshold) {
-                    if (leftmost)
-                        _insertion_sort(begin, end, comp);
-                    else
-                        _insertion_sort_unguarded(begin, end, comp);
+                    leftmost ? insertion_sort(begin, end, comp) : insertion_sort_unguarded(begin, end, comp);
                     return;
                 }
 
@@ -62,15 +77,15 @@ namespace ppqsort::impl {
                     bool left = false;
                     bool right = false;
                     if (l_size > insertion_threshold)
-                        left = _partial_insertion_sort(begin, pivot_pos, comp);
+                        left = is_sorted_par(begin, pivot_pos, comp, l_size, threads, leftmost);
                     if (r_size > insertion_threshold)
-                        right = _partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
+                        right = is_sorted_par(pivot_pos + 1, end, comp, r_size, threads, false);
                     if (left && right) {
                         return;
-                    } else if (left) {
+                    } if (left) {
                         begin = ++pivot_pos;
                         continue;
-                    } else if (right) {
+                    } if (right) {
                         end = pivot_pos;
                         continue;
                     }
@@ -87,13 +102,18 @@ namespace ppqsort::impl {
                         return;
                     }
                     // partition unbalanced, shuffle elements
-                    _deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
+                    deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
                 }
 
-                threads >>= 1;
+                int threads_left = 1;
+                if (threads > 1) {
+                    // round up to assign more threads to the recursion tasks
+                    threads_left = threads * l_size / size + (l_size & 1);
+                    threads -= threads_left;
+                }
                 #pragma omp task
                 par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, seq_thr,
-                                                        threads, leftmost);
+                                                        threads_left, leftmost);
                 leftmost = false;
                 begin = ++pivot_pos;
             }
@@ -109,12 +129,15 @@ namespace ppqsort::impl {
             return;
         constexpr bool branchless = Force_branchless || Branchless;
         const int threads = omp_get_max_threads();
-        int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
-        seq_thr = (seq_thr < parameters::insertion_threshold) ? parameters::insertion_threshold : seq_thr;
         auto size = end - begin;
-        if ((size < seq_thr) || (threads < 2))
-            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(end - begin));
+        if ((threads < 2) || (size < parameters::seq_threshold))
+            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
 
+        if (openmp::is_sorted_par(begin, end, comp, size, threads, true))
+            return;
+
+        int seq_thr = size / threads / parameters::par_thr_div;
+        seq_thr = (seq_thr < parameters::insertion_threshold) ? parameters::insertion_threshold : seq_thr;
         omp_set_max_active_levels(2);
         #pragma omp parallel
         {

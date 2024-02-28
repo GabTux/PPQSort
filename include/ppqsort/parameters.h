@@ -66,6 +66,7 @@ namespace ppqsort::parameters {
     constexpr int buffer_size = 24 * cacheline_size;
     constexpr int par_thr_div = 10;
     constexpr int par_partition_block_size = 1 << 14;
+    constexpr int seq_threshold = 1 << 18;
 } // namespace ppqsort::parameters
 
 namespace ppqsort::execution {
