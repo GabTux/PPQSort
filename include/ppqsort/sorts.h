@@ -79,7 +79,7 @@ namespace ppqsort::impl {
     // Sort [begin, end) using comp by insertion sort
     template<typename RandomIt, typename Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
-    inline void _insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
+    inline void insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return;
 
@@ -108,7 +108,7 @@ namespace ppqsort::impl {
     // that is lower or equal to all elements in input range
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
-    inline void _insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
+    inline void insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return;
 
@@ -122,11 +122,6 @@ namespace ppqsort::impl {
                 T elem = std::move(*second);
                 do {
                     *second-- = std::move(*first--);
-                    #ifdef DEBUG
-                    if (first == begin - 2) {
-                        throw std::runtime_error("Read out of bounds, please check your comparator");
-                    }
-                    #endif
                 } while (comp(elem, *first));
                 *second = std::move(elem);
             }
@@ -137,7 +132,7 @@ namespace ppqsort::impl {
     // if more than swap_limit swaps are made, abort sorting
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
-    inline bool _partial_insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
+    inline bool partial_insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return true;
 
@@ -165,7 +160,7 @@ namespace ppqsort::impl {
 
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
-    inline bool _partial_insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
+    inline bool partial_insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
         if (begin == end)
             return true;
 

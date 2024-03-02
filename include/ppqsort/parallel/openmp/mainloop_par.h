@@ -105,15 +105,10 @@ namespace ppqsort::impl {
                     deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
                 }
 
-                int threads_left = 1;
-                if (threads > 1) {
-                    // round up to assign more threads to the recursion tasks
-                    threads_left = threads * l_size / size + (l_size & 1);
-                    threads -= threads_left;
-                }
+                threads >>= 1;
                 #pragma omp task
                 par_loop<RandomIt, Compare, branchless>(begin, pivot_pos, comp, bad_allowed, seq_thr,
-                                                        threads_left, leftmost);
+                                                        threads, leftmost);
                 leftmost = false;
                 begin = ++pivot_pos;
             }
@@ -132,9 +127,6 @@ namespace ppqsort::impl {
         auto size = end - begin;
         if ((threads < 2) || (size < parameters::seq_threshold))
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
-
-        if (openmp::is_sorted_par(begin, end, comp, size, threads, true))
-            return;
 
         int seq_thr = size / threads / parameters::par_thr_div;
         seq_thr = (seq_thr < parameters::insertion_threshold) ? parameters::insertion_threshold : seq_thr;
