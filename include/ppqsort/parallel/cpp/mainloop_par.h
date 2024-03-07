@@ -33,9 +33,9 @@ namespace ppqsort::impl {
 
                 if (size < insertion_threshold) {
                     if (leftmost)
-                        _insertion_sort(begin, end, comp);
+                        insertion_sort(begin, end, comp);
                     else
-                        _insertion_sort_unguarded(begin, end, comp);
+                        insertion_sort_unguarded(begin, end, comp);
                     return;
                 }
 
@@ -66,9 +66,9 @@ namespace ppqsort::impl {
                     bool left = false;
                     bool right = false;
                     if (l_size > insertion_threshold)
-                        left = _partial_insertion_sort(begin, pivot_pos, comp);
+                        left = partial_insertion_sort(begin, pivot_pos, comp);
                     if (r_size > insertion_threshold)
-                        right = _partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
+                        right = partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
                     if (left && right) {
                         return;
                     } else if (left) {
@@ -91,7 +91,7 @@ namespace ppqsort::impl {
                         return;
                     }
                     // partition unbalanced, shuffle elements
-                    _deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
+                    deterministic_shuffle(begin, end, l_size, r_size, pivot_pos, insertion_threshold);
                 }
 
                 threads >>= 1;
