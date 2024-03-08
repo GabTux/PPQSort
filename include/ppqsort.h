@@ -8,10 +8,14 @@
 #include "ppqsort/parameters.h"
 
 
-#ifdef _OPENMP
-#include "ppqsort/parallel/openmp/mainloop_par.h"
+#ifdef FORCE_CPP
+    #include "ppqsort/parallel/cpp/mainloop_par.h"
 #else
-#include "ppqsort/parallel/cpp/mainloop_par.h"
+    #ifdef _OPENMP
+        #include "ppqsort/parallel/openmp/mainloop_par.h"
+    #else
+        #include "ppqsort/parallel/cpp/mainloop_par.h"
+    #endif
 #endif
 
 
