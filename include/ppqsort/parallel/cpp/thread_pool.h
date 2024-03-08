@@ -3,6 +3,9 @@
 #include <functional>
 #include <mutex>
 #include <queue>
+#include <semaphore>
+
+#include "task_stack.h"
 
 namespace ppqsort::impl::cpp {
     template <typename taskType = std::function<void()>>
@@ -10,10 +13,10 @@ namespace ppqsort::impl::cpp {
         public:
             ThreadPool(ThreadPool&) = delete;
 
-            explicit ThreadPool(const unsigned int threads_count = std::jthread::hardware_concurrency()) :
-            threads_tasks_(threads_count) {
+            explicit ThreadPool(const std::size_t threads_count = std::jthread::hardware_concurrency()) :
+            threads_count_(threads_count), threads_queues_(threads_count) {
+                threads_.reserve(threads_count);
                 for (unsigned int i = 0; i < threads_count; ++i) {
-                    threads_priorities_.emplace_back(i);
                     threads_.emplace_back([this, i](const std::stop_token& st) { this->worker(st, i); });
                 }
             }
@@ -38,7 +41,7 @@ namespace ppqsort::impl::cpp {
                 // send exit signal to all threads and wait for them
                 for (std::size_t i = 0; i < threads_.size(); ++i) {
                     threads_[i].request_stop();
-                    threads_tasks_[i].task_semaphore.release();
+                    threads_queues_[i].task_semaphore.release();
                 }
                 for (auto& thread : threads_)
                     thread.join();
@@ -46,70 +49,69 @@ namespace ppqsort::impl::cpp {
             }
 
             void push_task(taskType&& task) {
-                // assign the task to the thread with the highest priority (it is at the front of the queue)
-                // after that assign to the thread the lowest priority (move to the back of the queue)
-                std::unique_lock priority_lock(mtx_priority_);
-                const auto id = threads_priorities_.front();
-                threads_priorities_.pop_front();
-                threads_priorities_.push_back(id);
-                priority_lock.unlock();
+                // relaxed is ok, because we do not care about the exact value
+                const std::size_t i = index_.fetch_add(1, std::memory_order_relaxed);
 
-                std::unique_lock other_queue_lock(threads_tasks_[id].mutex);
-                threads_tasks_[id].tasks.push_back(std::move(task));
-                other_queue_lock.unlock();
-                pending_tasks_.fetch_add(1, std::memory_order_release);
-                handling_tasks_.fetch_add(1, std::memory_order_release);
-                threads_tasks_[id].task_semaphore.release();
+                // try to push without blocking to any queue
+                // if no queue is available, try again for K times, before waiting for one
+                constexpr unsigned int K = 2;
+                for (std::size_t n = 0; n < threads_count_ * K; ++n) {
+                    if (threads_queues_[(i + n) % threads_count_].queue_.try_push(std::forward<taskType>(task))) {
+                        after_push(i, n);
+                        return;
+                    }
+                }
+
+                // all queues busy, wait for the first one to be free
+                threads_queues_[i % threads_count_].queue_.push(std::forward<taskType>(task));
+                after_push(i, 0);
             }
 
         private:
-            void get_next_task(std::unique_lock<std::mutex>& my_queue_lock, const unsigned int id) {
-                auto task = std::move(threads_tasks_[id].tasks.front());
-                threads_tasks_[id].tasks.pop_front();
-                my_queue_lock.unlock();
+            void after_push(const std::size_t i, const std::size_t n) {
+                pending_tasks_.fetch_add(1, std::memory_order_release);
+                handling_tasks_.fetch_add(1, std::memory_order_release);
+                threads_queues_[(i + n) % threads_count_].task_semaphore.release();
+            }
+
+            bool get_next_task(const unsigned int id) {
+                bool found = false;
+
+                // spin around all queues to find a task, start with my queue
+                for (std::size_t n = 0; n < threads_count_; ++n) {
+                    if (auto task = threads_queues_[(id + n) % threads_count_].queue_.try_pop()) {
+                        run_task(std::forward<taskType>(task.value()));
+                        found = true;
+                        break;
+                    }
+                }
+
+                // if all queues busy or empty, check our queue if empty
+                if (!found) {
+                    if (auto task = threads_queues_[id].queue_.pop()) {
+                        run_task(std::forward<taskType>(task.value()));
+                        found = true;
+                    }
+                }
+
+                return found;
+            }
+
+            void run_task(taskType&& task) {
                 pending_tasks_.fetch_sub(1, std::memory_order_release);
                 task();
                 handling_tasks_.fetch_sub(1, std::memory_order_release);
             }
 
-            void try_to_steal_task(const unsigned int id) {
-                for (size_t i = 0; i < threads_tasks_.size(); ++i) {
-                    if (i == id) continue;
-                    std::unique_lock other_queue_lock(threads_tasks_[i].mutex);
-                    if (!threads_tasks_[i].tasks.empty()) {
-                        auto task = std::move(threads_tasks_[i].tasks.front());
-                        threads_tasks_[i].tasks.pop_front();
-                        other_queue_lock.unlock();
-                        pending_tasks_.fetch_sub(1, std::memory_order_release);
-                        task();
-                        handling_tasks_.fetch_sub(1, std::memory_order_release);
-                        return;
-                    }
-                }
-            }
-
-            void rotate_id_to_front(const unsigned int id) {
-                std::unique_lock priority_lock(mtx_priority_);
-                const auto iter = std::ranges::find(threads_priorities_, id);
-                std::ignore = threads_priorities_.erase(iter);
-                threads_priorities_.push_front(id);
-                priority_lock.unlock();
-            }
-
             void worker(const std::stop_token& stop_token, const unsigned int id) {
                 while (true) {
                     // sleep until signalled about new tasks
-                    threads_tasks_[id].task_semaphore.acquire();
+                    threads_queues_[id].task_semaphore.acquire();
 
                     // while there are tasks, execute them (mine or stolen)
                     while (pending_tasks_.load(std::memory_order_acquire) > 0) {
-                        std::unique_lock my_queue_lock(threads_tasks_[id].mutex);
-                        if (!threads_tasks_[id].tasks.empty()) {
-                            get_next_task(my_queue_lock, id);
-                        } else {
-                            my_queue_lock.unlock();
-                            try_to_steal_task(id);
-                        }
+                        if (!get_next_task(id))
+                            break;
                     }
 
                     // check if we were last working thread and eventually signal about all tasks finished
@@ -119,21 +121,22 @@ namespace ppqsort::impl::cpp {
                     if (stop_token.stop_requested())
                         break;
 
-                    rotate_id_to_front(id);
+                    // I have no tasks, so prioritize me
+                    index_.store(id, std::memory_order_relaxed);
                 }
             }
 
-            struct TaskItem {
-                std::mutex mutex;
-                std::deque<taskType> tasks;
-                std::binary_semaphore task_semaphore{0};    // used to signal about new tasks
+            struct ThreadQueue {
+                TaskStack<taskType> queue_;
+                std::binary_semaphore task_semaphore{0};
             };
 
             std::vector<std::jthread> threads_;
-            std::deque<TaskItem> threads_tasks_;
-            std::deque<unsigned int> threads_priorities_;
-            alignas(parameters::cacheline_size) std::atomic<unsigned int> pending_tasks_{0};
-            alignas(parameters::cacheline_size) std::atomic<unsigned int> handling_tasks_{0};
+            std::vector<ThreadQueue> threads_queues_;
+            const unsigned int threads_count_;
+            alignas(parameters::cacheline_size) std::atomic<std::size_t> index_{0};
+            alignas(parameters::cacheline_size) std::atomic<std::size_t> pending_tasks_{0};
+            alignas(parameters::cacheline_size) std::atomic<std::size_t> handling_tasks_{0};
             std::binary_semaphore threads_done_semaphore_{0};   // used to wait for all tasks to finish
             std::mutex mtx_priority_;
             bool stopped = false;
