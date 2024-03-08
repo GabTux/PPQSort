@@ -96,7 +96,7 @@ TYPED_TEST_P(RandomVectorFixture, FullTypeRange) {
         this->FillVector();
         auto ref(this->data);
         auto orig(this->data);
-        ppqsort::sort(this->data.begin(), this->data.end());
+        ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end());
         std::sort(ref.begin(), ref.end());
         ASSERT_THAT(this->data, ::testing::ContainerEq(ref))
             << "input: " << print_vec(orig);
@@ -109,7 +109,7 @@ TYPED_TEST_P(RandomVectorFixture, TypeRange10) {
         this->FillVector(10);
         auto ref(this->data);
         auto orig(this->data);
-        ppqsort::sort(this->data.begin(), this->data.end());
+        ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end());
         std::sort(ref.begin(), ref.end());
         ASSERT_THAT(this->data, ::testing::ContainerEq(ref))
             << "input: " << print_vec(orig);
