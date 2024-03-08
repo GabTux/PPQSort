@@ -9,14 +9,14 @@ namespace ppqsort::impl {
 
         struct ThreadPools {
             cpp::ThreadPool<> partition;
-            // master thread also works --> create one less thread
             cpp::ThreadPool<> tasks = cpp::ThreadPool(std::jthread::hardware_concurrency());
         };
+
+        // TODO: is_sorted_par as cpp version
 
         namespace cpp {
         template <typename RandomIt, typename Compare,
                   bool branchless,
-                  typename T = typename std::iterator_traits<RandomIt>::value_type,
                   typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
         inline void par_loop(RandomIt begin, RandomIt end, Compare comp,
                              diff_t bad_allowed, diff_t seq_thr, int threads,
@@ -116,16 +116,17 @@ namespace ppqsort::impl {
             return;
         constexpr bool branchless = Force_branchless || Branchless;
         int threads = static_cast<int>(std::jthread::hardware_concurrency());
+        auto size = end - begin;
+        if ((threads < 2) || (size < parameters::seq_threshold))
+            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
+
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
-
-
         ThreadPools threadpools;
         threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
             cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
                       log2(end - begin),
                       seq_thr, threads, threadpools);
         });
-
         // first we need to wait for recursive tasks, then we can destroy partition threads
         threadpools.tasks.wait_and_stop();
         threadpools.partition.wait_and_stop();
