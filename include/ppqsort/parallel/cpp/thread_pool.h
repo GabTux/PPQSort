@@ -65,7 +65,7 @@ namespace ppqsort::impl::cpp {
                 for (std::size_t n = 0; n < threads_count_ * K; ++n) {
                     if (threads_queues_[(i + n) % threads_count_].try_push(std::forward<taskType>(task))) {
                         pending_tasks_.fetch_add(1, std::memory_order_release);
-                        pending_tasks_.notify_one();
+                        pending_tasks_.notify_all();
                         return;
                     }
                 }
@@ -73,7 +73,7 @@ namespace ppqsort::impl::cpp {
                 // all queues busy, wait for the first one
                 threads_queues_[i % threads_count_].push(std::forward<taskType>(task));
                 pending_tasks_.fetch_add(1, std::memory_order_release);
-                pending_tasks_.notify_one();
+                pending_tasks_.notify_all();
             }
 
         private:
