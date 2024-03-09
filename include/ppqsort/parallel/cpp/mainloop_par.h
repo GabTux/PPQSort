@@ -7,14 +7,35 @@
 
 namespace ppqsort::impl {
 
-        struct ThreadPools {
-            cpp::ThreadPool<> partition;
-            cpp::ThreadPool<> tasks = cpp::ThreadPool(std::jthread::hardware_concurrency());
-        };
+    namespace cpp {
 
-        // TODO: is_sorted_par as cpp version
+    struct ThreadPools {
+        ThreadPool<> partition;
+        ThreadPool<> tasks;
+    };
 
-        namespace cpp {
+    template <typename RandomIt, typename Compare>
+    bool is_sorted_par(RandomIt begin, RandomIt end, Compare comp,
+                   const std::size_t size, const int n_threads, bool leftmost, ThreadPool<>& thread_pool) {
+        if (n_threads < 2)
+            return leftmost ? partial_insertion_sort(begin, end, comp) : partial_insertion_sort_unguarded(begin, end, comp);
+
+        std::latch threads_done(n_threads);
+        std::vector<uint8_t> sorted(n_threads);
+        const std::size_t chunk_size = (size + n_threads - 1) / n_threads;
+        for (int id = 0; id < n_threads; ++id) {
+            thread_pool.push_task([begin, size, chunk_size, id, &comp, &sorted, &threads_done] {
+                const std::size_t my_begin = id * chunk_size;
+                const std::size_t my_end = std::min(my_begin + chunk_size + 1, size);
+                sorted[id] = std::is_sorted(begin + my_begin, begin + my_end, comp);
+                threads_done.count_down();
+            });
+        }
+        threads_done.wait();
+
+        return std::all_of(sorted.begin(), sorted.end(), [](const uint8_t x) { return x; });
+    }
+
         template <typename RandomIt, typename Compare,
                   bool branchless,
                   typename diff_t = typename std::iterator_traits<RandomIt>::difference_type>
@@ -66,9 +87,9 @@ namespace ppqsort::impl {
                     bool left = false;
                     bool right = false;
                     if (l_size > insertion_threshold)
-                        left = partial_insertion_sort(begin, pivot_pos, comp);
+                        left = is_sorted_par(begin, pivot_pos, comp, l_size, threads, leftmost, thread_pools.partition);
                     if (r_size > insertion_threshold)
-                        right = partial_insertion_sort_unguarded(pivot_pos + 1, end, comp);
+                        right = is_sorted_par(pivot_pos + 1, end, comp, r_size, threads, false, thread_pools.partition);
                     if (left && right) {
                         return;
                     } else if (left) {
@@ -121,7 +142,7 @@ namespace ppqsort::impl {
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
 
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
-        ThreadPools threadpools;
+        cpp::ThreadPools threadpools;
         threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
             cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
                       log2(end - begin),
