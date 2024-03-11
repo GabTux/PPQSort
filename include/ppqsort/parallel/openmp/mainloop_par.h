@@ -135,6 +135,7 @@ namespace ppqsort::impl {
         {
             #pragma omp single
             {
+                #pragma omp task
                 openmp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
                                                                 log2(end - begin),
                                                                 seq_thr, threads);
