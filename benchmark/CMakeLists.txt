@@ -36,7 +36,7 @@ CPMAddPackage(
         NAME oneTBB
         GITHUB_REPOSITORY oneapi-src/oneTBB
         VERSION 2021.12.0-rc2
-        OPTIONS "TBB_TEST OFF"
+        OPTIONS "TBB_TEST OFF" "TBB_STRICT OFF" "TBB_INSTALL OFF" "TBB_DISABLE_HWLOC_AUTOMATIC_SEARCH ON"
 )
 
 CPMAddPackage(
@@ -142,7 +142,6 @@ get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem
 #CPMAddPackage("https://suitesparse-collection-website.herokuapp.com/MM/Lee/fem_hifreq_circuit.tar.gz")
 
 # ---- Create binary ----
-
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
 target_link_libraries(${PROJECT_NAME}
