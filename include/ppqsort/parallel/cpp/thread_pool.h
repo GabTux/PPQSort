@@ -39,9 +39,8 @@ namespace ppqsort::impl::cpp {
                         threads_done_semaphore_.acquire();
 
                 // request stops
-                for (std::size_t i = 0; i < threads_.size(); ++i) {
-                    threads_[i].request_stop();
-                }
+                for (auto& thread : threads_)
+                    thread.request_stop();
 
                 // wake all potentionally sleeping threads
                 pending_tasks_.store(1, std::memory_order_release);
@@ -110,7 +109,7 @@ namespace ppqsort::impl::cpp {
             void worker(const std::stop_token& stop_token, const unsigned int id) {
                 while (true) {
                     // sleep until there are any tasks in queues
-                    pending_tasks_.wait(0,std::memory_order_acquire);
+                    pending_tasks_.wait(0, std::memory_order_acquire);
                     if (stop_token.stop_requested())
                         break;
 
