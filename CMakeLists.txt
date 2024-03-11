@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14...3.22)
 
 # ---- Project ----
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(
   PPQSort
   VERSION 1.0
