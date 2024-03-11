@@ -32,7 +32,7 @@ public:
     }
 
     virtual void deallocate() {
-        if (!std::is_sorted(this->data_.begin(), this->data_.end()))
+        if (!is_sorted_par())
             throw std::runtime_error("Not sorted");
         std::vector<T>().swap(this->data_);
     }
@@ -41,6 +41,22 @@ public:
 
 protected:
     std::vector<T> data_;
+
+    bool is_sorted_par(const int n_threads = omp_get_max_threads()) {
+        if (data_.size() < 2)
+            return true;
+
+        std::vector<uint8_t> sorted(omp_get_num_threads());
+        #pragma omp parallel
+        {
+            const int tid = omp_get_thread_num();
+            const std::size_t chunk_size = (data_.size() + n_threads - 1) / n_threads;
+            const std::size_t my_begin = tid * chunk_size;
+            const std::size_t my_end = std::min(my_begin + chunk_size + 1, data_.size());
+            sorted[tid] = std::is_sorted(this->data_.begin() + my_begin, this->data_.begin() + my_end);
+        }
+        return std::all_of(sorted.begin(), sorted.end(), [](const uint8_t x) { return x; });
+    }
 };
 
 template <typename T, std::size_t Size = ELEMENTS_VECTOR_DEFAULT,
