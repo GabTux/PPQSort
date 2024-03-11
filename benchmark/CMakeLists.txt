@@ -35,7 +35,7 @@ CPMAddPackage(
 CPMAddPackage(
         NAME oneTBB
         GITHUB_REPOSITORY oneapi-src/oneTBB
-        VERSION 2021.11.0
+        VERSION 2021.12.0-rc2
         OPTIONS "TBB_TEST OFF"
 )
 
