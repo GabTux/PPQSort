@@ -12,7 +12,7 @@ namespace ppqsort::impl::cpp {
 
             TaskStack() {
                 // reserve some space to prevent reallocations
-                constexpr unsigned int reserved_tasks = 1024;
+                constexpr unsigned int reserved_tasks = 128;
                 stack_.reserve(reserved_tasks);
             }
 
