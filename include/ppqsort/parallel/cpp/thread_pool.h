@@ -122,9 +122,9 @@ namespace ppqsort::impl::cpp {
                 }
             }
 
+            const unsigned int threads_count_;
             std::vector<std::jthread> threads_;
             std::vector<TaskStack<>> threads_queues_;
-            const unsigned int threads_count_;
             alignas(parameters::cacheline_size) std::atomic<std::size_t> index_{0};
             alignas(parameters::cacheline_size) std::atomic<std::size_t> pending_tasks_{0};
             alignas(parameters::cacheline_size) std::atomic<std::size_t> total_tasks_{0};
