@@ -14,6 +14,7 @@ include(../cmake/tools.cmake)
 # ---- Dependencies ----
 
 include(../cmake/CPM.cmake)
+CPMAddPackage("gh:TheLartians/Format.cmake@1.8.1")
 
 CPMAddPackage(
         NAME googletest
