@@ -32,8 +32,11 @@ public:
     }
 
     virtual void deallocate() {
-        if (!is_sorted_par())
-            throw std::runtime_error("Not sorted");
+        // overriden for SoA matrices, but we have to satisfy the compiler
+        // if type is complex, this would not compile (complex are naturally not comparable)
+        if constexpr (!std::is_same_v<T, std::complex<double>>)
+            if (!is_sorted_par())
+                throw std::runtime_error("Not sorted");
         std::vector<T>().swap(this->data_);
     }
 
@@ -42,18 +45,20 @@ public:
 protected:
     std::vector<T> data_;
 
-    bool is_sorted_par(const int n_threads = omp_get_max_threads()) {
+    template <typename Compare = std::less<T>>
+    bool is_sorted_par(Compare comp = Compare()) {
         if (data_.size() < 2)
             return true;
 
-        std::vector<uint8_t> sorted(omp_get_num_threads());
+        const std::size_t n_threads = omp_get_max_threads();
+        std::vector<uint8_t> sorted(n_threads, 0);
         #pragma omp parallel
         {
             const int tid = omp_get_thread_num();
             const std::size_t chunk_size = (data_.size() + n_threads - 1) / n_threads;
             const std::size_t my_begin = tid * chunk_size;
             const std::size_t my_end = std::min(my_begin + chunk_size + 1, data_.size());
-            sorted[tid] = std::is_sorted(this->data_.begin() + my_begin, this->data_.begin() + my_end);
+            sorted[tid] = std::is_sorted(this->data_.begin() + my_begin, this->data_.begin() + my_end, comp);
         }
         return std::all_of(sorted.begin(), sorted.end(), [](const uint8_t x) { return x; });
     }
@@ -315,20 +320,14 @@ using matrix_element_double = matrix_element_t<double>;
 using matrix_element_complex = matrix_element_t<std::complex<double>>;
 
 template <Matrices Matrix, bool Complex>
-class SparseMatrixVectorFixture : public VectorFixture<std::conditional_t<Complex, matrix_element_complex, matrix_element_double>> {
+class SparseMatrixAoSVectorFixture : public VectorFixture<std::conditional_t<Complex, matrix_element_complex, matrix_element_double>> {
     using ValueType = std::conditional_t<Complex, std::complex<double>, double>;
     public:
-        SparseMatrixVectorFixture() :
+        SparseMatrixAoSVectorFixture() :
             file_(get_filename()) {
             if (!file_.is_open())
                 throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename());
             read_to_memory();
-        }
-
-        void prepare() override {
-            this->deallocate();
-            allocate();
-            generate_data();
         }
 
         void allocate() override {
@@ -366,4 +365,59 @@ class SparseMatrixVectorFixture : public VectorFixture<std::conditional_t<Comple
         std::size_t nrows_{}, ncols_{};
         std::vector<uint32_t> rows_, cols_;
         std::vector<ValueType> values_{};
+};
+
+auto c_comp = [](const std::complex<double>& a, const std::complex<double>& b) {
+    return true;
+};
+
+template <Matrices Matrix, bool Complex>
+class SparseMatrixSoAVectorFixture : public VectorFixture<std::conditional_t<Complex, std::complex<double>, double>> {
+    using ValueType = std::conditional_t<Complex, std::complex<double>, double>;
+public:
+    SparseMatrixSoAVectorFixture() :
+        file_(get_filename()) {
+        if (!file_.is_open())
+            throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename());
+        read_to_memory();
+    }
+
+    void allocate() override {
+        this->data_.resize(values_orig_.size());
+    };
+
+    void generate_data() override {
+        rows_ = rows_orig_;
+        cols_ = cols_orig_;
+        this->data_ = values_orig_;
+    }
+
+    void deallocate() override {
+        std::vector<ValueType>().swap(this->data_);
+        std::vector<uint32_t>().swap(this->rows_);
+        std::vector<uint32_t>().swap(this->cols_);
+    }
+
+protected:
+    consteval static const char * get_filename() {
+        switch (Matrix) {
+            case af_shell10:
+                return "af_shell10.mtx";
+            case cage15:
+                return "cage15.mtx";
+            case fem_hifreq_circuit:
+                return "fem_hifreq_circuit.mtx";
+            default:
+                throw std::runtime_error("Unknown matrix");
+        }
+    }
+
+    void read_to_memory() {
+        fast_matrix_market::read_matrix_market_triplet(file_, nrows_, ncols_, rows_orig_, cols_orig_, values_orig_);
+    }
+
+    std::fstream file_;
+    std::size_t nrows_{}, ncols_{};
+    std::vector<uint32_t> rows_orig_, cols_orig_, rows_, cols_;
+    std::vector<ValueType> values_orig_;
 };
