@@ -1,3 +1,7 @@
+[![Tests](https://github.com/GabTux/ppqsort_suite/actions/workflows/tests.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/tests.yml)
+[![Standalone](https://github.com/GabTux/ppqsort_suite/actions/workflows/standalone.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/standalone.yml)
+[![Install](https://github.com/GabTux/ppqsort_suite/actions/workflows/install.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/install.yml)
+
 # Suite for PPQSort (Parallel Pattern QuickSort)
 
 ## Overview
