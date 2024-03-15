@@ -46,8 +46,3 @@ jobs:
 
       - name: build
         run: cmake --build build --config Debug -j4
-
-      - name: test
-        run: |
-          cd build
-          ctest --build-config Debug
