@@ -1,7 +1,15 @@
 #pragma once
 
+// Libc++ does not support atomic_ref yet
+// https://en.cppreference.com/w/cpp/compiler_support#C.2B.2B20_library_features
+#ifdef __cpp_lib_atomic_ref
 #include "partition_branchless_par.h"
 #include "partition_par.h"
+#else
+#include "no_atomic_ref/partition_branchless_par.h"
+#include "no_atomic_ref/partition_par.h"
+#endif
+
 #include "thread_pool.h"
 #include "../../mainloop.h"
 
