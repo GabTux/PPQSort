@@ -4,8 +4,11 @@
 
 #include <random>
 #include <limits>
-#include <tuple>
-#include <ostream>
+
+
+/****************************************************
+ * PPQSort Tests
+****************************************************/
 
 template <typename T>
 class VectorFixture : public ::testing::Test {
@@ -22,7 +25,7 @@ template <typename T, typename Distribution = std::conditional_t<std::is_integra
                                               std::uniform_int_distribution<T>,
                                               std::uniform_real_distribution<T>>>
 class RandomVectorFixture : public VectorFixture<T> {
-    private:
+    protected:
         T min;
         T max;
 
@@ -44,7 +47,9 @@ class RandomVectorFixture : public VectorFixture<T> {
             this->FillVector(min, max);
         }
 
-        void FillVector(long long range) {
+        void FillVector(std::size_t range) {
+            if (range > static_cast<std::size_t>(max - min))
+                return;
             T from, to;
             if constexpr (std::is_signed_v<T>) {
                 from = -range / 2;
@@ -57,6 +62,18 @@ class RandomVectorFixture : public VectorFixture<T> {
         }
 };
 
+static std::size_t sizes[] = {
+    10, 20, 129, // to test small inputs --> switch to sequential
+    static_cast<std::size_t>(1e6),
+    static_cast<std::size_t>(1e7)
+};
+
+static std::size_t ranges[] = {
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 129,
+    static_cast<std::size_t>(1e4),
+    static_cast<std::size_t>(1e5)
+};
+
 TEST(StaticInputs, vals_20) {
     std::vector<int> in = {52, 0, 5, 1, 2, 3, 45, 8, 1, 10,
                            52, 0, 5, 1, 2, 3, 45, 8, 1, 10};
@@ -66,28 +83,60 @@ TEST(StaticInputs, vals_20) {
     ASSERT_THAT(in, ::testing::ContainerEq(ref));
 }
 
-template <typename T>
-std::string print_vec(T vec) {
-    std::ostringstream res;
-    for (auto it = vec.begin(); (it+1) != vec.end(); ++it)
-        res << *it << ", ";
-    res << *(vec.end() - 1);
-    return res.str();
+TEST(StaticInputs, EmptyContainer) {
+    std::vector<int> in = {};
+    ppqsort::sort(ppqsort::execution::par, in.begin(), in.end());
+    ppqsort::sort(ppqsort::execution::seq, in.begin(), in.end());
+    ASSERT_THAT(in, ::testing::ContainerEq(std::vector<int>{}));
 }
 
-static long long sizes[] = {
-    1,
-    2,
-    5,
-    10,
-    20,
-    50,
-    100,
-    1000,
-    10000,
-    100000
-};
+TEST(Patterns, Ascending) {
+    for (auto const & size: sizes) {
+        std::vector<int> in(size);
+        std::iota(in.begin(), in.end(), 0);
+        std::vector<int> ref(in);
+        ppqsort::sort(ppqsort::execution::par, in.begin(), in.end());
+        std::sort(ref.begin(), ref.end());
+        ASSERT_THAT(in, ::testing::ContainerEq(ref));
+    }
+}
 
+TEST(Patterns, Desceding) {
+    for (auto const & size: sizes) {
+        std::vector<int> in(size);
+        std::iota(in.rbegin(), in.rend(), 0);
+        std::vector<int> ref(in);
+        ppqsort::sort(ppqsort::execution::par, in.begin(), in.end());
+        std::sort(ref.begin(), ref.end());
+        ASSERT_THAT(in, ::testing::ContainerEq(ref));
+    }
+}
+
+TEST(Patterns, Constant) {
+    for (auto const & size: sizes) {
+        std::vector<int> in(size, 42);
+        std::vector<int> ref(in);
+        ppqsort::sort(ppqsort::execution::par, in.begin(), in.end());
+        std::sort(ref.begin(), ref.end());
+        ASSERT_THAT(in, ::testing::ContainerEq(ref));
+    }
+}
+
+TEST(Patterns, HalfSorted) {
+    for (auto const & size: sizes) {
+        std::vector<int> in(size);
+        auto mid = size / 2;
+        std::iota(in.begin(), in.end(), 0);
+        std::shuffle(in.begin() + mid, in.end(), std::mt19937 {std::random_device{}()});
+        std::vector<int> ref(in);
+        ppqsort::sort(ppqsort::execution::par, in.begin(), in.end());
+        std::sort(ref.begin(), ref.end());
+        ASSERT_THAT(in, ::testing::ContainerEq(ref));
+    }
+}
+
+
+// Random to test general cases, different types and ranges
 TYPED_TEST_SUITE_P(RandomVectorFixture);
 
 TYPED_TEST_P(RandomVectorFixture, FullTypeRange) {
@@ -95,29 +144,40 @@ TYPED_TEST_P(RandomVectorFixture, FullTypeRange) {
         this->AllocateVector(size);
         this->FillVector();
         auto ref(this->data);
-        auto orig(this->data);
         ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end());
         std::sort(ref.begin(), ref.end());
-        ASSERT_THAT(this->data, ::testing::ContainerEq(ref))
-            << "input: " << print_vec(orig);
+        ASSERT_THAT(this->data, ::testing::ContainerEq(ref));
     }
 }
 
-TYPED_TEST_P(RandomVectorFixture, TypeRange10) {
+TYPED_TEST_P(RandomVectorFixture, CustomComparator) {
     for (auto const & size: sizes) {
+        auto comp = [](const auto & a, const auto & b) { return a > b; };
         this->AllocateVector(size);
-        this->FillVector(10);
+        this->FillVector();
         auto ref(this->data);
-        auto orig(this->data);
-        ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end());
-        std::sort(ref.begin(), ref.end());
-        ASSERT_THAT(this->data, ::testing::ContainerEq(ref))
-            << "input: " << print_vec(orig);
+        ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end(), comp);
+        std::sort(ref.begin(), ref.end(), comp);
+        ASSERT_THAT(this->data, ::testing::ContainerEq(ref));
     }
 }
 
+TYPED_TEST_P(RandomVectorFixture, Ranges) {
+    for (auto const & size: sizes) {
+        for (auto const & i: ranges) {
+            if (i > static_cast<std::size_t>(this->max - this->min))
+                continue;
+            this->AllocateVector(size);
+            this->FillVector(i);
+            auto ref(this->data);
+            ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end());
+            std::sort(ref.begin(), ref.end());
+            ASSERT_THAT(this->data, ::testing::ContainerEq(ref));
+        }
+    }
+}
 
-REGISTER_TYPED_TEST_SUITE_P(RandomVectorFixture, FullTypeRange, TypeRange10);
+REGISTER_TYPED_TEST_SUITE_P(RandomVectorFixture, FullTypeRange, CustomComparator, Ranges);
 using baseTypesUnsigned = ::testing::Types<unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long>;
 using baseTypes = ::testing::Types<char, short, int, long, long long, float, double, long double>;
 INSTANTIATE_TYPED_TEST_SUITE_P(UnsignedTypes, RandomVectorFixture, baseTypesUnsigned);
