@@ -55,20 +55,58 @@ namespace ppqsort::parameters {
     constexpr std::size_t hardware_constructive_interference_size = 64;
     #endif
 
+    /**
+     * @var insertion_threshold_primitive
+     * @brief Threshold for switching to insertiton sort, when the type is primitive.
+     */
     constexpr int insertion_threshold_primitive = 32;
+    /**
+     * @var insertion_threshold
+     * @brief Threshold for switching to insertiton sort.
+     */
     constexpr int insertion_threshold = 12;
+    /**
+     * @var partial_insertion_threshold
+     * @brief Maximum swap count for partial insertion sort.
+     */
     constexpr int partial_insertion_threshold = 8;
+    /**
+     * @var median_threshold
+     * @brief Threshold for switching to median of three in pivot selection.
+     */
     constexpr int median_threshold = 128;
+    /**
+     * @var partition_ratio
+     * @brief Ratio used in computation for identifying bad partition.
+     */
     constexpr int partition_ratio = 8;
+    /**
+     * @var cacheline_size
+     * @brief Size of cacheline in bytes.
+     */
     constexpr int cacheline_size = hardware_constructive_interference_size;
-    // 1536 elements from input blocks --> 24,5KB for doubles
-    // offsets arrays 6 KB --> 30,5KB total should fit in 32 KB L1 cache
-    constexpr int buffer_size = 24 * cacheline_size;
-    using buffer_type = unsigned short;
+    /**
+     * @var buffer_size
+     * @brief Size of block for branchless partitioning.
+     */
+    constexpr int buffer_size = 1 << 10;
+    using buffer_type = uint16_t;
     static_assert(std::numeric_limits<buffer_type>::max() > buffer_size,
                   "buffer_size is bigger than type for buffer can hold. This will overflow");
-    constexpr int par_thr_div = 10;
+    /**
+     * @var par_thr_div
+     * @brief Division of threshold for computing sequential threshold (aka constant "k").
+     */
+    constexpr int par_thr_div = 8;
+    /**
+     * @var par_partition_block_size
+     * @brief Size of block for parallel partitioning.
+     */
     constexpr int par_partition_block_size = 1 << 14;
+    /**
+     * @var seq_threshold
+     * @brief Minimal size for using parallel sort.
+     */
     constexpr int seq_threshold = 1 << 18;
 } // namespace ppqsort::parameters
 
@@ -78,9 +116,25 @@ namespace ppqsort::execution {
     class sequenced_policy_force_branchless {};
     class parallel_policy_force_branchless {};
 
+    /**
+     * @var seq
+     * @brief Sequential execution policy.
+     */
     inline constexpr sequenced_policy seq{};
+    /**
+     * @var par
+     * @brief Parallel execution policy.
+     */
     inline constexpr parallel_policy par{};
+    /**
+     * @var seq_force_branchless
+     * @brief Sequential execution policy with forced branchless partitioning.
+     */
     inline constexpr sequenced_policy_force_branchless seq_force_branchless{};
+    /**
+     * @var par_force_branchless
+     * @brief Parallel execution policy with forced branchless partitioning.
+     */
     inline constexpr parallel_policy_force_branchless par_force_branchless{};
 
     template<typename T, typename U>
