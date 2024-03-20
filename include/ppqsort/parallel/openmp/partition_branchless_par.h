@@ -63,13 +63,8 @@ namespace ppqsort::impl::openmp {
             diff_t t_size = 0;
             bool t_already_partitioned = true;
 
-            alignas(parameters::cacheline_size) unsigned short t_offsets_l[parameters::buffer_size] = {0};
-            alignas(parameters::cacheline_size) unsigned short t_offsets_r[parameters::buffer_size] = {0};
-
-            static_assert(std::numeric_limits<std::remove_all_extents<decltype(t_offsets_l)>::type>::max() >
-                          parameters::buffer_size,
-                          "buffer_size is bigger than type for buffer can hold. This will overflow");
-
+            alignas(parameters::cacheline_size) parameters::buffer_type t_offsets_l[parameters::buffer_size] = {0};
+            alignas(parameters::cacheline_size) parameters::buffer_type t_offsets_r[parameters::buffer_size] = {0};
 
             diff_t t_count_l, t_count_r, t_start_l, t_start_r;
             t_count_l = t_count_r = t_start_l = t_start_r = 0;

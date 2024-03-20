@@ -184,12 +184,8 @@ namespace ppqsort::impl {
         // allign offsets buffers to fill whole cachelines for speed
         // offsets holds information about elements, which needs to be swapped
         // i.e.: offsets_l[1] == 5 <-- elem on (first + 5) needs to be swapped
-        alignas(parameters::cacheline_size) unsigned short offsets_l[parameters::buffer_size];
-        alignas(parameters::cacheline_size) unsigned short offsets_r[parameters::buffer_size];
-
-        static_assert(std::numeric_limits<std::remove_all_extents_t<decltype(offsets_l)>>::max() >
-                      parameters::buffer_size,
-                      "buffer_size is bigger than type for buffer can hold. This will overflow");
+        alignas(parameters::cacheline_size) parameters::buffer_type offsets_l[parameters::buffer_size];
+        alignas(parameters::cacheline_size) parameters::buffer_type offsets_r[parameters::buffer_size];
 
         RandomIt block_l = first;
         RandomIt block_r = last;

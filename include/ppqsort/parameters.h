@@ -64,6 +64,9 @@ namespace ppqsort::parameters {
     // 1536 elements from input blocks --> 24,5KB for doubles
     // offsets arrays 6 KB --> 30,5KB total should fit in 32 KB L1 cache
     constexpr int buffer_size = 24 * cacheline_size;
+    using buffer_type = unsigned short;
+    static_assert(std::numeric_limits<buffer_type>::max() > buffer_size,
+                  "buffer_size is bigger than type for buffer can hold. This will overflow");
     constexpr int par_thr_div = 10;
     constexpr int par_partition_block_size = 1 << 14;
     constexpr int seq_threshold = 1 << 18;
