@@ -4,8 +4,10 @@
 #include <mutex>
 #include <queue>
 #include <semaphore>
+#include <thread>
 
 #include "task_stack.h"
+#include "../../parameters.h"
 
 namespace ppqsort::impl::cpp {
     template <typename taskType = std::function<void()>>

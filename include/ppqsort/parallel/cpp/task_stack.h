@@ -2,6 +2,9 @@
 
 #include <vector>
 #include <mutex>
+#include <optional>
+#include <functional>
+
 
 namespace ppqsort::impl::cpp {
 
