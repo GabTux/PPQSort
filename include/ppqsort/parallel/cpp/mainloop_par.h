@@ -142,6 +142,8 @@ namespace ppqsort::impl {
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
 
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
+        seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
+                                                   : parameters::insertion_threshold);
         cpp::ThreadPools threadpools;
         threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
             cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,

@@ -124,7 +124,8 @@ namespace ppqsort::impl {
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
 
         int seq_thr = size / threads / parameters::par_thr_div;
-        seq_thr = (seq_thr < parameters::insertion_threshold) ? parameters::insertion_threshold : seq_thr;
+        seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
+                                               : parameters::insertion_threshold);
         omp_set_max_active_levels(2);
         #pragma omp parallel
         {
