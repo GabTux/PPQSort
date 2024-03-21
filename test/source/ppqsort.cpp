@@ -166,7 +166,7 @@ TEST(Patterns, Adversary) {
                 candidate = y;
             return data[x] < data[y];
         };
-        ppqsort::sort(ppqsort::execution::par, asc_vals.begin(), asc_vals.end(), cmp);
+        ppqsort::sort(ppqsort::execution::par_force_branchless, asc_vals.begin(), asc_vals.end(), cmp);
         ppqsort::sort(ppqsort::execution::par, data.begin(), data.end());
     }
 }
