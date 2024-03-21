@@ -60,14 +60,6 @@ namespace ppqsort::impl {
                     return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, bad_allowed, leftmost);
                 }
 
-                if (size < insertion_threshold) {
-                    if (leftmost)
-                        insertion_sort(begin, end, comp);
-                    else
-                        insertion_sort_unguarded(begin, end, comp);
-                    return;
-                }
-
                 choose_pivot<branchless>(begin, end, size, comp);
 
                 // pivot is the same as previous pivot
