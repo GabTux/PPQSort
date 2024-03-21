@@ -94,8 +94,7 @@ register_benchmark_default(sort_signature, sort_name, Rotated, int, default, pre
 register_benchmark_default(sort_signature, sort_name, Rotated, double, default, prepare_code);     \
 register_benchmark_default(sort_signature, sort_name, Heap, short, default, prepare_code);         \
 register_benchmark_default(sort_signature, sort_name, Heap, int, default, prepare_code);           \
-register_benchmark_default(sort_signature, sort_name, Heap, double, default, prepare_code);        \
-register_benchmark_size(sort_signature, sort_name, Adversary, int, size##_##1e8, int(1e8), prepare_code);
+register_benchmark_default(sort_signature, sort_name, Heap, double, default, prepare_code);
 
 #define small_range_benchmark(sort_signature, sort_name, prepare_code)                                                 \
 register_benchmark_range(sort_signature, sort_name, Random, int, small_range##_##1, 0, 0, prepare_code);               \
@@ -130,6 +129,65 @@ register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, fem_hifreq
 register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, af_shell10, false, prepare_code)                 \
 register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, cage15, false, prepare_code)                     \
 register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, fem_hifreq_circuit, true, prepare_code)
+
+#define prepare_adversary(Size)                     \
+int candidate = 0;                                  \
+int nsolid = 0;                                     \
+const int gas = Size - 1;                           \
+std::ranges::fill(data_, gas);                      \
+std::vector<int> asc_vals(Size);                    \
+std::iota(asc_vals.begin(), asc_vals.end(), 0);     \
+auto cmp = [&](int x, int y) {                      \
+    if (data_[x] == gas && data_[y] == gas) {       \
+    if (x == candidate) data_[x] = nsolid++;        \
+    else data_[y] = nsolid++;                       \
+}                                                   \
+if (this->data_[x] == gas) candidate = x;           \
+else if (data_[y] == gas) candidate = y;            \
+return data_[x] < data_[y];                         \
+};
+
+#define adversary_benchmark(sort_signature, sort_name, prepare_code)                                            \
+register_benchmark_size(sort_signature, sort_name, Adversary, int, size##_##1e8, int(1e8), prepare_code)
+
+#define adversary_benchmarks_all                                                                                       \
+adversary_benchmark(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par,                   \
+    prepare_adversary(int(1e8));                                                                                       \
+    ppqsort::sort(ppqsort::execution::par_force_branchless, asc_vals.begin(), asc_vals.end(), cmp);)                   \
+adversary_benchmark(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    __gnu_parallel::sort(asc_vals.begin(), asc_vals.end(), cmp, __gnu_parallel::balanced_quicksort_tag());)  \
+adversary_benchmark(boost::sort::block_indirect_sort(data_.begin(), data_.end()), block_indirect_sort,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    boost::sort::block_indirect_sort(asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(std::sort(std::execution::par, data_.begin(), data_.end()), std_sort_par,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    std::sort(std::execution::par, asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(std::sort(poolstl::par, data_.begin(), data_.end()), poolstl_sort_par,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    std::sort(poolstl::par, asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(tbb::parallel_sort(data_.begin(), data_.end()), tbb_parallel_sort,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    tbb::parallel_sort(asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(thrust::sort(thrust::host, data_.begin(), data_.end()), thrust_device_sort,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    thrust::sort(thrust::host, asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(mpqsort::sort(mpqsort::execution::par, data_.begin(), data_.end()), mpqsort_par,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    mpqsort::sort(mpqsort::execution::par, asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(ips4o::parallel::sort(data_.begin(), data_.end()), ips4o,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    ips4o::parallel::sort(asc_vals.begin(), asc_vals.end(), cmp);)  \
+adversary_benchmark(aqsort::sort(data_.size(), &cmp_normal, &sw), aqsort,   \
+    auto sw = [&](std::size_t i, std::size_t j) { std::swap(data_[i], data_[j]); }; \
+    auto cmp_normal = [&](std::size_t i, std::size_t j) { return data_[i] < data_[j]; }; \
+    prepare_adversary(int(1e8));                                                                                           \
+    aqsort::sort(asc_vals.size(), &cmp, &sw);)
+/* CPP11Sort tbd:
+adversary_benchmark(cpp11sort::sort(data_.begin(), data_.end()), cpp11sort_par,   \
+    prepare_adversary(int(1e8));                                                                                           \
+    cpp11sort::sort(asc_vals.begin(), asc_vals.end(), cmp);)  \
+*/
 
 #define complete_benchmark_set(sort_signature, sort_name, prepare_code)                           \
 default_benchmark(sort_signature, sort_name, prepare_code)                                        \
@@ -184,3 +242,6 @@ complete_benchmark_set_aq(aqsort::sort(data_.size(), &cmp, &sw), aqsort,
 
 complete_benchmark_set(mpqsort::sort(mpqsort::execution::par, data_.begin(), data_.end()), mpqsort_par, "");
 complete_benchmark_set(ips4o::parallel::sort(data_.begin(), data_.end()), ips4o, "");
+
+// Adversary benchmarks, can take a lot of time
+adversary_benchmarks_all

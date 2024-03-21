@@ -189,36 +189,8 @@ concept SizeFit = std::numeric_limits<T>::max() > (Size - 1);
 
 template <typename T = int, std::size_t Size = ELEMENTS_VECTOR_DEFAULT>
 class AdversaryVectorFixture : public VectorFixture<T, Size> {
-public:
-    void generate_data() requires SizeFit<T, Size> {
-        // inspired from this paper: https://www.cs.dartmouth.edu/~doug/mdmspe.pdf
-        int candidate = 0;
-        int nsolid = 0;
-        const int gas = Size - 1;
-
-        // initially, all values are gas
-        std::ranges::fill(this->data_, gas);
-
-        // fill with values from 0 to Size-1
-        // will be used as indices to this->data
-        std::vector<int> asc_vals(Size);
-        std::iota(asc_vals.begin(), asc_vals.end(), 0);
-
-        auto cmp = [&](int x, int y) {
-            if (this->data_[x] == gas && this->data_[y] == gas)
-            {
-                if (x == candidate)
-                    this->data_[x] = nsolid++;
-                else
-                    this->data_[y] = nsolid++;
-            }
-            if (this->data_[x] == gas)
-                candidate = x;
-            else if (this->data_[y] == gas)
-                candidate = y;
-            return this->data_[x] < this->data_[y];
-        };
-        std::ranges::sort(asc_vals, cmp);
+    void generate_data() override {
+        // nothing in general, specific to each sort
     }
 };
 
