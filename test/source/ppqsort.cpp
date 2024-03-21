@@ -135,6 +135,42 @@ TEST(Patterns, HalfSorted) {
     }
 }
 
+TEST(Patterns, Adversary) {
+    std::size_t sizes[] = {128, static_cast<std::size_t>(1e7)};
+    for (const auto & Size: sizes) {
+        std::vector<int> data;
+        data.resize(Size);
+        int candidate = 0;
+        int nsolid = 0;
+        const int gas = Size - 1;
+
+        // initially, all values are gas
+        std::ranges::fill(data, gas);
+
+        // fill with values from 0 to Size-1
+        // will be used as indices to this->data
+        std::vector<int> asc_vals(Size);
+        std::iota(asc_vals.begin(), asc_vals.end(), 0);
+
+        auto cmp = [&](int x, int y) {
+            if (data[x] == gas && data[y] == gas)
+            {
+                if (x == candidate)
+                    data[x] = nsolid++;
+                else
+                    data[y] = nsolid++;
+            }
+            if (data[x] == gas)
+                candidate = x;
+            else if (data[y] == gas)
+                candidate = y;
+            return data[x] < data[y];
+        };
+        ppqsort::sort(ppqsort::execution::par, asc_vals.begin(), asc_vals.end(), cmp);
+        ppqsort::sort(ppqsort::execution::par, data.begin(), data.end());
+    }
+}
+
 
 // Random to test general cases, different types and ranges
 TYPED_TEST_SUITE_P(RandomVectorFixture);

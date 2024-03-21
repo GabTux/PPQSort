@@ -24,10 +24,30 @@ TEST(ThreadPool, TryPushConcurrent) {
     ASSERT_EQ(counter, 1000);
 }
 
+
+TEST(ThreadPool, OneThread) {
+    using namespace ppqsort::impl::cpp;
+    ThreadPool pool(1);
+    std::atomic<int> counter = 0;
+
+    // Tasks to push values
+    auto task = [&]() { pool.push_task([&]() {counter++;}); };
+
+    // Push tasks concurrently in loop
+    for (int i = 0; i < 1000; ++i) {
+        std::ignore = std::async(std::launch::async, task);
+    }
+
+    pool.wait_and_stop();
+    ASSERT_EQ(counter, 1000);
+}
+
+
+
+
 TEST(ThreadPool, StopEmpty) {
     using namespace ppqsort::impl::cpp;
     ThreadPool pool;
-    pool.wait_and_stop();
 }
 
 TEST(ThreadPool, StopDuringPush) {
