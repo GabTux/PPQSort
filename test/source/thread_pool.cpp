@@ -12,13 +12,16 @@ TEST(ThreadPool, TryPushConcurrent) {
     ThreadPool pool(2);
     std::atomic<int> counter = 0;
 
-    // Tasks to push values
     auto task = [&]() { pool.push_task([&]() {counter++;}); };
 
-    // Push tasks concurrently in loop
-    for (int i = 0; i < 1000; ++i) {
-        std::ignore = std::async(std::launch::async, task);
+    // Push tasks concurrently in loop and wait for them to finish
+	std::vector<std::future<void>> futures;
+	for (int i = 0; i < 1000; ++i) {
+        futures.push_back(std::async(std::launch::async, task));
     }
+	for (auto& f : futures) {
+	    f.wait();
+	}
 
     pool.wait_and_stop();
     ASSERT_EQ(counter, 1000);
@@ -30,13 +33,15 @@ TEST(ThreadPool, OneThread) {
     ThreadPool pool(1);
     std::atomic<int> counter = 0;
 
-    // Tasks to push values
     auto task = [&]() { pool.push_task([&]() {counter++;}); };
 
-    // Push tasks concurrently in loop
-    for (int i = 0; i < 1000; ++i) {
-        std::ignore = std::async(std::launch::async, task);
+    std::vector<std::future<void>> futures;
+	for (int i = 0; i < 1000; ++i) {
+        futures.push_back(std::async(std::launch::async, task));
     }
+	for (auto& f : futures) {
+	    f.wait();
+	}
 
     pool.wait_and_stop();
     ASSERT_EQ(counter, 1000);
