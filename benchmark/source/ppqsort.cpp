@@ -120,15 +120,19 @@ register_string_benchmark(sort_signature, sort_name, OrganPipe, prepended, true,
 register_string_benchmark(sort_signature, sort_name, Rotated, prepended, true, prepare_code)                           \
 register_string_benchmark(sort_signature, sort_name, Heap, prepended, true, prepare_code)
 
-#define matrix_benchmark_AoS(sort_signature, sort_name, prepare_code)                                                  \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, af_shell10, false, prepare_code)                 \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, cage15, false, prepare_code)                     \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, fem_hifreq_circuit, true, prepare_code)
 
-#define matrix_benchmark_SoA(sort_signature, sort_name, prepare_code)                                                  \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, af_shell10, false, prepare_code)                 \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, cage15, false, prepare_code)                     \
-register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, fem_hifreq_circuit, true, prepare_code)
+#define matrix_benchmark_AoS(sort_signature, sort_name, prepare_code)                                                                        \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, mawi_201512020330, matrix_element_t<int>, prepare_code)                \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, uk_2005, matrix_element_t<uint8_t>, prepare_code)                      \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, dielFilterV3clx, matrix_element_t<std::complex<double>>, prepare_code) \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixAoS, Queen_4147, matrix_element_t<double>, prepare_code)
+
+
+#define matrix_benchmark_SoA(sort_signature, sort_name, prepare_code)                                                       \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, mawi_201512020330, int, prepare_code)                 \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, uk_2005, uint8_t, prepare_code)                       \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, dielFilterV3clx, std::complex<double>, prepare_code) \
+register_matrix_benchmark(sort_signature, sort_name, SparseMatrixSoA, Queen_4147, double, prepare_code)
 
 #define prepare_adversary(Size)                     \
 int candidate = 0;                                  \
@@ -239,7 +243,6 @@ complete_benchmark_set_aq(aqsort::sort(data_.size(), &cmp, &sw), aqsort,
     auto sw = [&](std::size_t i, std::size_t j) { std::swap(data_[i], data_[j]); };
     auto cmp = [&](std::size_t i, std::size_t j) { return data_[i] < data_[j]; }
 );
-
 complete_benchmark_set(mpqsort::sort(mpqsort::execution::par, data_.begin(), data_.end()), mpqsort_par, "");
 complete_benchmark_set(ips4o::parallel::sort(data_.begin(), data_.end()), ips4o, "");
 

@@ -269,10 +269,22 @@ class HeapStringVectorFixture : public RandomStringVectorFixture<Prepended, Stri
 };
 
 enum Matrices {
-    af_shell10,
-    cage15,
-    fem_hifreq_circuit,
+    mawi_201512020330,
+    uk_2005,
+    dielFilterV3clx,
+    Queen_4147
 };
+
+consteval static const char * get_filename(const Matrices Matrix) {
+    switch (Matrix) {
+        case mawi_201512020330: return "mawi_201512020330.mtx";
+        case uk_2005: return "uk-2005.mtx";
+        case dielFilterV3clx: return "dielFilterV3clx.mtx";
+        case Queen_4147: return "Queen_4147.mtx";
+        default: static_assert(true, "Unknown matrix");
+
+    }
+}
 
 template <typename ValueType>
 struct matrix_element_t {
@@ -288,17 +300,13 @@ struct matrix_element_t {
     }
 };
 
-using matrix_element_double = matrix_element_t<double>;
-using matrix_element_complex = matrix_element_t<std::complex<double>>;
-
-template <Matrices Matrix, bool Complex>
-class SparseMatrixAoSVectorFixture : public VectorFixture<std::conditional_t<Complex, matrix_element_complex, matrix_element_double>> {
-    using ValueType = std::conditional_t<Complex, std::complex<double>, double>;
+template <Matrices Matrix, typename Type>
+class SparseMatrixAoSVectorFixture : public VectorFixture<Type> {
     public:
         SparseMatrixAoSVectorFixture() :
-            file_(get_filename()) {
+            file_(get_filename(Matrix)) {
             if (!file_.is_open())
-                throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename());
+                throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename(Matrix));
             read_to_memory();
         }
 
@@ -316,41 +324,25 @@ class SparseMatrixAoSVectorFixture : public VectorFixture<std::conditional_t<Com
         }
 
     private:
-        consteval static const char * get_filename() {
-            switch (Matrix) {
-                case af_shell10:
-                    return "af_shell10.mtx";
-                case cage15:
-                    return "cage15.mtx";
-                case fem_hifreq_circuit:
-                    return "fem_hifreq_circuit.mtx";
-                default:
-                    throw std::runtime_error("Unknown matrix");
-            }
-        }
 
         void read_to_memory() {
             fast_matrix_market::read_matrix_market_triplet(file_, nrows_, ncols_, rows_, cols_, values_);
         }
 
+        using ValueType = std::type_identity_t<decltype(std::declval<Type>().value)>;
         std::fstream file_;
         std::size_t nrows_{}, ncols_{};
         std::vector<uint32_t> rows_, cols_;
         std::vector<ValueType> values_{};
 };
 
-auto c_comp = [](const std::complex<double>& a, const std::complex<double>& b) {
-    return true;
-};
-
-template <Matrices Matrix, bool Complex>
-class SparseMatrixSoAVectorFixture : public VectorFixture<std::conditional_t<Complex, std::complex<double>, double>> {
-    using ValueType = std::conditional_t<Complex, std::complex<double>, double>;
+template <Matrices Matrix, typename Type>
+class SparseMatrixSoAVectorFixture : public VectorFixture<Type> {
 public:
     SparseMatrixSoAVectorFixture() :
-        file_(get_filename()) {
+        file_(get_filename(Matrix)) {
         if (!file_.is_open())
-            throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename());
+            throw std::runtime_error(std::string("Error opening matrix file: ") +get_filename(Matrix));
         read_to_memory();
     }
 
@@ -365,24 +357,12 @@ public:
     }
 
     void deallocate() override {
-        std::vector<ValueType>().swap(this->data_);
+        std::vector<Type>().swap(this->data_);
         std::vector<uint32_t>().swap(this->rows_);
         std::vector<uint32_t>().swap(this->cols_);
     }
 
 protected:
-    consteval static const char * get_filename() {
-        switch (Matrix) {
-            case af_shell10:
-                return "af_shell10.mtx";
-            case cage15:
-                return "cage15.mtx";
-            case fem_hifreq_circuit:
-                return "fem_hifreq_circuit.mtx";
-            default:
-                throw std::runtime_error("Unknown matrix");
-        }
-    }
 
     void read_to_memory() {
         fast_matrix_market::read_matrix_market_triplet(file_, nrows_, ncols_, rows_orig_, cols_orig_, values_orig_);
@@ -391,5 +371,5 @@ protected:
     std::fstream file_;
     std::size_t nrows_{}, ncols_{};
     std::vector<uint32_t> rows_orig_, cols_orig_, rows_, cols_;
-    std::vector<ValueType> values_orig_;
+    std::vector<Type> values_orig_{};
 };
