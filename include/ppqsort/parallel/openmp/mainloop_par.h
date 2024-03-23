@@ -114,11 +114,11 @@ namespace ppqsort::impl {
          typename RandomIt,
          typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>,
          bool Branchless = use_branchless<typename std::iterator_traits<RandomIt>::value_type, Compare>::value>
-    void par_ppqsort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    void par_ppqsort(RandomIt begin, RandomIt end,
+                     Compare comp = Compare(), const int threads = omp_get_max_threads()) {
         if (begin == end)
             return;
         constexpr bool branchless = Force_branchless || Branchless;
-        const int threads = omp_get_max_threads();
         auto size = end - begin;
         if ((threads < 2) || (size < parameters::seq_threshold))
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
@@ -138,4 +138,12 @@ namespace ppqsort::impl {
             }
         }
     }
+
+    template <bool Force_branchless = false,
+             typename RandomIt,
+             typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+        void par_ppqsort(RandomIt begin, RandomIt end, const int threads) {
+            Compare comp = Compare();
+            par_ppqsort<Force_branchless>(begin, end, comp, threads);
+        }
 }

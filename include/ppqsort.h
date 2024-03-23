@@ -64,6 +64,11 @@ namespace ppqsort {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end);
    }
 
+   template <typename ExecutionPolicy, typename RandomIt>
+   void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, const int threads) {
+       impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, threads);
+   }
+
    template <typename RandomIt, typename Compare>
    void sort(RandomIt begin, RandomIt end, Compare comp) {
        impl::seq_ppqsort(begin, end, comp);
@@ -72,5 +77,10 @@ namespace ppqsort {
    template <typename ExecutionPolicy, typename RandomIt, typename Compare>
    void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, Compare comp) {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, comp);
+   }
+
+   template <typename ExecutionPolicy, typename RandomIt, typename Compare>
+   void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, Compare comp, const int threads) {
+       impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, comp, threads);
    }
 }

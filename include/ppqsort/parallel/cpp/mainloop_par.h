@@ -18,6 +18,9 @@ namespace ppqsort::impl {
     namespace cpp {
 
     struct ThreadPools {
+        ThreadPools() = default;
+        explicit ThreadPools(const int threads) : partition(threads), tasks(threads) {}
+
         ThreadPool<> partition;
         ThreadPool<> tasks;
     };
@@ -127,16 +130,15 @@ namespace ppqsort::impl {
         }
     }
 
-
     template <bool Force_branchless = false,
              typename RandomIt,
              typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>,
              bool Branchless = use_branchless<typename std::iterator_traits<RandomIt>::value_type, Compare>::value>
-    void par_ppqsort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    void par_ppqsort(RandomIt begin, RandomIt end, Compare comp = Compare(),
+                     int threads = static_cast<int>(std::jthread::hardware_concurrency())) {
         if (begin == end)
             return;
         constexpr bool branchless = Force_branchless || Branchless;
-        int threads = static_cast<int>(std::jthread::hardware_concurrency());
         auto size = end - begin;
         if ((threads < 2) || (size < parameters::seq_threshold))
             return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
@@ -144,7 +146,7 @@ namespace ppqsort::impl {
         int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
         seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
                                                    : parameters::insertion_threshold);
-        cpp::ThreadPools threadpools;
+        cpp::ThreadPools threadpools(threads);
         threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
             cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
                       log2(end - begin),
@@ -153,5 +155,12 @@ namespace ppqsort::impl {
         // first we need to wait for recursive tasks, then we can destroy partition threads
         threadpools.tasks.wait_and_stop();
         threadpools.partition.wait_and_stop();
+    }
+
+    template <bool Force_branchless = false,
+         typename RandomIt,
+         typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+    void par_ppqsort(RandomIt begin, RandomIt end, int threads) {
+        return par_ppqsort<Force_branchless>(begin, end, Compare(), threads);
     }
 }
