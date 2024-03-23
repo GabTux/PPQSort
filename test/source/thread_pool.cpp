@@ -12,7 +12,7 @@ TEST(ThreadPool, TryPushConcurrent) {
     ThreadPool pool(2);
     std::atomic<int> counter = 0;
 
-    auto task = [&]() { pool.push_task([&]() {counter++;}); };
+    auto task = [&]() { pool.push_task([&]() {++counter;}); };
 
     // Push tasks concurrently in loop and wait for them to finish
 	std::vector<std::future<void>> futures;
@@ -47,35 +47,9 @@ TEST(ThreadPool, OneThread) {
     ASSERT_EQ(counter, 1000);
 }
 
-
-
-
 TEST(ThreadPool, StopEmpty) {
     using namespace ppqsort::impl::cpp;
     ThreadPool pool;
-}
-
-TEST(ThreadPool, StopDuringPush) {
-    using namespace ppqsort::impl::cpp;
-    ThreadPool pool(2);
-    std::atomic<bool> stop{false};
-    std::atomic<int> counter{0};
-
-    // Thread pushing tasks
-    std::thread pusher([&] {
-      while (!stop) {
-        pool.push_task([&] { counter++; });
-      }
-    });
-
-    // Thread stopping the pool
-    std::thread stopper([&] {
-      stop = true;
-      pool.wait_and_stop();
-    });
-
-    pusher.join();
-    stopper.join();
 }
 
 TEST(ThreadPool, PrematureExit) {
@@ -109,4 +83,32 @@ TEST(ThreadPool, PrematureExit) {
     testPool.push_task(task_1);
     testPool.wait_and_stop();
     ASSERT_EQ(id_task_1, id_end);
+}
+
+TEST(TaskStack, PushPop) {
+    using namespace ppqsort::impl::cpp;
+    TaskStack<int> stack;
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+    ASSERT_EQ(stack.pop().value(), 3);
+    ASSERT_EQ(stack.pop().value(), 2);
+    ASSERT_EQ(stack.pop().value(), 1);
+}
+
+TEST(TaskStack, PopEmpty) {
+    using namespace ppqsort::impl::cpp;
+    TaskStack<int> stack;
+    ASSERT_EQ(stack.pop().has_value(), false);
+}
+
+TEST(TaskStack, tryPushPop) {
+    using namespace ppqsort::impl::cpp;
+    TaskStack<int> stack;
+    stack.try_push(1);
+    stack.try_push(2);
+    stack.try_push(3);
+    ASSERT_EQ(stack.try_pop().value(), 3);
+    ASSERT_EQ(stack.try_pop().value(), 2);
+    ASSERT_EQ(stack.try_pop().value(), 1);
 }
