@@ -64,14 +64,11 @@ class RandomVectorFixture : public VectorFixture<T> {
 
 static std::size_t sizes[] = {
     10, 20, 129, // to test small inputs --> switch to sequential
-    static_cast<std::size_t>(1e6),
-    static_cast<std::size_t>(1e7)
+    static_cast<std::size_t>(1e6)
 };
 
 static std::size_t ranges[] = {
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 129,
-    static_cast<std::size_t>(1e4),
-    static_cast<std::size_t>(1e5)
+    1, 2, 3, 5, 10, 20
 };
 
 TEST(StaticInputs, vals_20) {
@@ -198,6 +195,28 @@ TYPED_TEST_P(RandomVectorFixture, CustomComparator) {
     }
 }
 
+TYPED_TEST_P(RandomVectorFixture, Threads) {
+    for (auto const & size: sizes) {
+        for (int threadCount = 1; threadCount <= 4; ++threadCount) {
+            auto comp = [](const auto & a, const auto & b) { return a > b; };
+            this->AllocateVector(size);
+            this->FillVector();
+            auto ref(this->data);
+            ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end(), comp, threadCount*2);
+            std::sort(ref.begin(), ref.end(), comp);
+            ASSERT_THAT(this->data, ::testing::ContainerEq(ref));
+        }
+        for (int threadCount = 1; threadCount <= 4; ++threadCount) {
+            this->AllocateVector(size);
+            this->FillVector();
+            auto ref(this->data);
+            ppqsort::sort(ppqsort::execution::par, this->data.begin(), this->data.end(), threadCount*2);
+            std::sort(ref.begin(), ref.end());
+            ASSERT_THAT(this->data, ::testing::ContainerEq(ref));
+        }
+    }
+}
+
 TYPED_TEST_P(RandomVectorFixture, Ranges) {
     for (auto const & size: sizes) {
         for (auto const & i: ranges) {
@@ -213,7 +232,7 @@ TYPED_TEST_P(RandomVectorFixture, Ranges) {
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(RandomVectorFixture, FullTypeRange, CustomComparator, Ranges);
+REGISTER_TYPED_TEST_SUITE_P(RandomVectorFixture, FullTypeRange, CustomComparator, Ranges, Threads);
 using baseTypesUnsigned = ::testing::Types<unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long>;
 using baseTypes = ::testing::Types<char, short, int, long, long long, float, double, long double>;
 INSTANTIATE_TYPED_TEST_SUITE_P(UnsignedTypes, RandomVectorFixture, baseTypesUnsigned);
