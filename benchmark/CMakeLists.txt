@@ -5,6 +5,8 @@ project(PPQSortBenchmark LANGUAGES CXX)
 include(../cmake/tools.cmake)
 include(../cmake/CPM.cmake)
 
+option(DOWNLOAD_MATRICES "Download and extract matrices (around 26GB)" ON)
+
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
 else()
@@ -132,13 +134,14 @@ function(get_matrix_data FILE_URL FILE_NAME)
   file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}/)
 endfunction()
 
-get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/MAWI/mawi_201512020330.tar.gz" "mawi_201512020330")
-get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/LAW/uk-2005.tar.gz" "uk-2005")
-get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Dziekonski/dielFilterV3clx.tar.gz" "dielFilterV3clx")
-get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Janna/Queen_4147.tar.gz" "Queen_4147")
-
-
-
+if(DOWNLOAD_MATRICES)
+  get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/MAWI/mawi_201512020330.tar.gz" "mawi_201512020330")
+  get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/LAW/uk-2005.tar.gz" "uk-2005")
+  get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Dziekonski/dielFilterV3clx.tar.gz" "dielFilterV3clx")
+  get_matrix_data("https://suitesparse-collection-website.herokuapp.com/MM/Janna/Queen_4147.tar.gz" "Queen_4147")
+else()
+  message(STATUS "Skipping downloading matrices, set DOWNLOAD_MATRICES to ON to download them")
+endif(DOWNLOAD_MATRICES)
 
 # also possible to use CPMAddPackage, but it will not remove the archive after extraction
 #CPMAddPackage("http://sparse-files.engr.tamu.edu/MM/Schenk_AFE/af_shell10.tar.gz")
