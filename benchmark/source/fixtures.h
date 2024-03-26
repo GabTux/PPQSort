@@ -35,8 +35,12 @@ public:
         // overriden for SoA matrices, but we have to satisfy the compiler
         // if type is complex, this would not compile (complex are naturally not comparable)
         if constexpr (!std::is_same_v<T, std::complex<double>>)
-            if (!is_sorted_par())
+            if (!is_sorted_par()) {
+                #ifdef DUMP_DATA
+                    dump_data(); // will create big file (at least 8GB)
+                #endif
                 throw std::runtime_error("Not sorted");
+            }
         std::vector<T>().swap(this->data_);
     }
 
@@ -61,6 +65,14 @@ protected:
             sorted[tid] = std::is_sorted(this->data_.begin() + my_begin, this->data_.begin() + my_end, comp);
         }
         return std::all_of(sorted.begin(), sorted.end(), [](const uint8_t x) { return x; });
+    }
+
+    void dump_data() {
+        std::cerr << "NOT SORTED: " << std::endl;
+        for (std::size_t i = 0; i < data_.size() - 1; ++i) {
+            std::cerr << data_[i] << ", ";
+        }
+        std::cerr << data_.back() << std::endl;
     }
 };
 
