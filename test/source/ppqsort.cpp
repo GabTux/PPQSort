@@ -87,6 +87,20 @@ TEST(StaticInputs, EmptyContainer) {
     ASSERT_THAT(in, ::testing::ContainerEq(std::vector<int>{}));
 }
 
+TEST(StaticInputs, TriggerSeqPartition) {
+    std::vector<int> in = {52, 0, 5, 1, 2, 3, 45, 8, 1, 10,
+                           52, 0, 5, 1, 2, 3, 45, 8, 1, 10};
+    std::vector ref(in);
+    ppqsort::impl::cpp::ThreadPool<> threadpool(4);
+    auto res = ppqsort::impl::cpp::partition_right_branchless_par(in.begin(), in.end(), std::less<>(), 4, threadpool);
+    auto pivot = *res.first;
+    ASSERT_TRUE(std::is_partitioned(in.begin(), in.end(), [&](const int & i){ return i < pivot;}));
+    res = ppqsort::impl::cpp::partition_to_right_par(in.begin(), in.end(), std::less<>(), 4, threadpool);
+    pivot = *res.first;
+    ASSERT_TRUE(std::is_partitioned(in.begin(), in.end(), [&](const int & i){ return i < pivot;}));
+}
+
+
 TEST(Patterns, Ascending) {
     for (auto const & size: sizes) {
         std::vector<int> in(size);
