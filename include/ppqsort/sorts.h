@@ -1,9 +1,16 @@
 #pragma once
 
 namespace ppqsort::impl {
-
-    // 8 instructions, no jumps, only conditional moves, 1 compare
-    // https://godbolt.org/z/o3sTjeGnv
+    /**
+     * @Brief        Sort 2 elements, 1 compare, branchless
+     * @Note         https://godbolt.org/z/o3sTjeGnv
+     * @tparam RandomIt
+     * @tparam Compare
+     * @tparam T
+     * @param a
+     * @param b
+     * @param comp
+     */
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_2_branchless(RandomIt a, RandomIt b, Compare comp) {
@@ -13,7 +20,17 @@ namespace ppqsort::impl {
         *a = tmp;
     }
 
-    // sorts correctly a, b, c if b and c are already sorted, 2 compares
+    /**
+     * @Brief        Sort 3 elements, 2 compares, branchless
+     * @Note         Assumes that b and c are already sorted
+     * @tparam RandomIt
+     * @tparam Compare
+     * @tparam T
+     * @param a
+     * @param b
+     * @param c
+     * @param comp
+     */
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void sort_3_partial_branchless(RandomIt a, RandomIt b, RandomIt c, Compare comp) {
@@ -26,16 +43,35 @@ namespace ppqsort::impl {
     }
 
     // 17 instructions, no jumps, 3 compares
-    template<class RandomIt, class Compare,
-             typename T = typename std::iterator_traits<RandomIt>::value_type>
+
+    /**
+     * @Brief        Sort 3 elements, 3 compares, branchless, 17 instructions
+     * @tparam RandomIt
+     * @tparam Compare
+     * @param a
+     * @param b
+     * @param c
+     * @param comp
+     */
+    template<class RandomIt, class Compare>
     inline void sort_3_branchless(RandomIt a, RandomIt b, RandomIt c, Compare comp) {
         sort_2_branchless(b, c, comp);
         sort_3_partial_branchless(a, b, c, comp);
     }
 
     // 43 instructions, no jumps, 9 compares
-    template<class RandomIt, class Compare,
-             typename T = typename std::iterator_traits<RandomIt>::value_type>
+    /**
+     * @Brief        Sort 5 elements, 9 compares, branchless, 43 instructions
+     * @tparam RandomIt
+     * @tparam Compare
+     * @param x1
+     * @param x2
+     * @param x3
+     * @param x4
+     * @param x5
+     * @param comp
+     */
+    template<class RandomIt, class Compare>
     inline void sort_5_branchless(RandomIt x1, RandomIt x2, RandomIt x3, RandomIt x4, RandomIt x5, Compare comp) {
         sort_2_branchless(x1, x2, comp);
         sort_2_branchless(x4, x5, comp);
@@ -46,6 +82,15 @@ namespace ppqsort::impl {
     }
 
     // 2-3 compares, 0-2 swaps, stable
+    /**
+     * @Brief        Sort 2 elements, maximum 3 compares and 2 swaps, minimum 2 compares and 0 swap
+     * @tparam RandomIt
+     * @tparam Compare
+     * @param a
+     * @param b
+     * @param c
+     * @param comp
+     */
     template<class RandomIt, class Compare>
     inline void sort_3(RandomIt a, RandomIt b, RandomIt c, Compare comp) {
         if (!comp(*b, *a)) {     // a <= b
@@ -76,7 +121,15 @@ namespace ppqsort::impl {
         }
     }
 
-    // Sort [begin, end) using comp by insertion sort
+        /**
+     * @Brief        Sort range using insertion sort
+     * @tparam RandomIt     Random access iterator
+     * @tparam Compare      Comparator
+     * @tparam T            Value type of RandomIt
+     * @param begin         Start of range
+     * @param end           End of range
+     * @param comp          Comparator
+     */
     template<typename RandomIt, typename Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
@@ -103,9 +156,16 @@ namespace ppqsort::impl {
         }
     }
 
-    // Sort [begin, end) using comp by insertion sort
-    // Assumes that on position (first - 1) is an element
-    // that is lower or equal to all elements in input range
+    /**
+     * @Brief        Sort range using insertion sort
+     * @Note         Assumes that element before begin is lower or equal to all elements in range
+     * @tparam RandomIt     Random access iterator
+     * @tparam Compare      Comparator
+     * @tparam T            Value type of RandomIt
+     * @param begin         Start of range
+     * @param end           End of range
+     * @param comp          Comparator
+     */
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline void insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
@@ -113,7 +173,7 @@ namespace ppqsort::impl {
             return;
 
         // same approach as for insertion sort above
-        // only one in while loop can be omitted
+        // only one check in while loop can be omitted
         for (RandomIt it = begin + 1; it != end; ++it) {
             auto first = --it;
             auto second = ++it;
@@ -128,14 +188,20 @@ namespace ppqsort::impl {
         }
     }
 
-    // Try to sort [begin, end) using comp by insertion sort
-    // if more than swap_limit swaps are made, abort sorting
+    /**
+     * @Brief        Try to sort range using insertion sort with limit on swaps
+     * @Note         Assumes begin < end
+     * @tparam RandomIt     Random access iterator
+     * @tparam Compare    Comparator
+     * @tparam T        Value type of RandomIt
+     * @param begin     Start of range
+     * @param end       End of range
+     * @param comp      Comparator
+     * @return        True if sorting was successful, false if aborted
+     */
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline bool partial_insertion_sort(RandomIt begin, RandomIt end, Compare comp) {
-        if (begin == end)
-            return true;
-
         constexpr unsigned int swap_limit = parameters::partial_insertion_threshold;
         std::size_t count = 0;
 
@@ -158,12 +224,20 @@ namespace ppqsort::impl {
         return true;
     }
 
+    /**
+     * @Brief        Try to sort range using insertion sort with limit on swaps
+     * @Note         Assumes begin < end and that element before begin is lower or equal to all elements in range
+     * @tparam RandomIt     Random access iterator
+     * @tparam Compare    Comparator
+     * @tparam T        Value type of RandomIt
+     * @param begin     Start of range
+     * @param end       End of range
+     * @param comp      Comparator
+     * @return        True if sorting was successful, false if aborted
+     */
     template<class RandomIt, class Compare,
              typename T = typename std::iterator_traits<RandomIt>::value_type>
     inline bool partial_insertion_sort_unguarded(RandomIt begin, RandomIt end, Compare comp) {
-        if (begin == end)
-            return true;
-
         constexpr unsigned int swap_limit = parameters::partial_insertion_threshold;
         std::size_t count = 0;
 
