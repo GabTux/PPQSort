@@ -3,9 +3,6 @@
 #include <bit>
 #include <execution>
 
-
-#define TIME_MEASURE
-
 #ifndef NDEBUG
     #include <bitset>
     #include <iostream>
@@ -34,7 +31,7 @@
     #define PRINT_ATOMIC_CPP(str)
 #endif
 
-#ifdef TIME_MEASURE
+#ifdef PPQ_TIME_MEASURE
     #include <chrono>
     #define MEASURE_START(name) \
         const std::chrono::steady_clock::time_point name = std::chrono::steady_clock::now();
