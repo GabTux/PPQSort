@@ -11,7 +11,7 @@ on:
       - main
 
 env:
-  CTEST_OUTPUT_ON_FAILURE: 1
+  CTEST_OUTPUT_ON_ FAILURE: 1
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
 
@@ -27,16 +27,46 @@ jobs:
           path: "**/cpm_modules"
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
-      - name: configure
+      - name: configure (cpp variant)
         run: cmake -Stest -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
 
-      - name: build
+      - name: build (cpp variant)
         run: cmake --build build -j4
 
-      - name: test
+      - name: test (cpp variant)
         run: |
           cd build
           ctest --build-config Debug
 
-      - name: collect code coverage
+      - name: collect code coverage (cpp variant)
         run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+
+  build_openmp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: configure (OpenMP variant)
+        run: cmake -Stest -Bbuild_openmp -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug -DOPENMP_VARIANT=ON
+
+      - name: build (OpenMP variant)
+        run: cmake --build build_openmp -j4
+
+      - name: test (OpenMP variant)
+        run: |
+          cd build_openmp
+          ctest --build-config Debug
+
+      - name: collect code coverage (OpenMP variant)
+        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+
+      - name: collect code coverage (combined)
+        run: |
+          coverage combine build/coverage.xml build_openmp/coverage.xml -o coverage.merged.xml
+          bash <(curl -s https://codecov.io/bash -f coverage.merged.xml) || echo "Codecov did not collect coverage reports"

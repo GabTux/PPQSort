@@ -1,3 +1,4 @@
+#ifndef _OPENMP
 
 /****************************************************
  * ThreadPool Tests
@@ -168,3 +169,4 @@ namespace ppqsort::impl::cpp {
         ASSERT_EQ(stack.try_pop().value(), 1);
     }
 }
+#endif

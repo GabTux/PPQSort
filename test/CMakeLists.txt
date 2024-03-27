@@ -45,6 +45,21 @@ if(NOT TEST_INSTALLED_VERSION)
   endif()
 endif()
 
+option(OPENMP_VARIANT "Use OpenMP variant" OFF)
+
+if(OPENMP_VARIANT)
+  find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_CXX)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE PPQSORT_OPENMP)
+        message("Using OpenMP version")
+    else()
+        message(WARNING "OpenMP not found, using C++ version")
+    endif()
+else()
+  message("Using C++ version")
+endif()
+
 # ---- Add PPQSortTests ----
 
 enable_testing()

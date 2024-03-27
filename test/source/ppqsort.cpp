@@ -87,6 +87,21 @@ TEST(StaticInputs, EmptyContainer) {
     ASSERT_THAT(in, ::testing::ContainerEq(std::vector<int>{}));
 }
 
+#ifdef _OPENMP
+
+TEST(StaticInputs, TriggerSeqPartition) {
+    std::vector<int> in = {52, 0, 5, 1, 2, 3, 45, 8, 1, 10,
+                           52, 0, 5, 1, 2, 3, 45, 8, 1, 10};
+    std::vector ref(in);
+    auto res = ppqsort::impl::openmp::partition_right_branchless_par(in.begin(), in.end(), std::less<>(), 4);
+    auto pivot = *res.first;
+    ASSERT_TRUE(std::is_partitioned(in.begin(), in.end(), [&](const int & i){ return i < pivot;}));
+    res = ppqsort::impl::openmp::partition_to_right_par(in.begin(), in.end(), std::less<>(), 4);
+    pivot = *res.first;
+    ASSERT_TRUE(std::is_partitioned(in.begin(), in.end(), [&](const int & i){ return i < pivot;}));
+}
+
+#else
 TEST(StaticInputs, TriggerSeqPartition) {
     std::vector<int> in = {52, 0, 5, 1, 2, 3, 45, 8, 1, 10,
                            52, 0, 5, 1, 2, 3, 45, 8, 1, 10};
@@ -99,6 +114,7 @@ TEST(StaticInputs, TriggerSeqPartition) {
     pivot = *res.first;
     ASSERT_TRUE(std::is_partitioned(in.begin(), in.end(), [&](const int & i){ return i < pivot;}));
 }
+#endif
 
 
 TEST(Patterns, Ascending) {
