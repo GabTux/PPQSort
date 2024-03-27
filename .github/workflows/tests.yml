@@ -65,8 +65,3 @@ jobs:
 
       - name: collect code coverage (OpenMP variant)
         run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
-
-      - name: collect code coverage (combined)
-        run: |
-          coverage combine build/coverage.xml build_openmp/coverage.xml -o coverage.merged.xml
-          bash <(curl -s https://codecov.io/bash -f coverage.merged.xml) || echo "Codecov did not collect coverage reports"

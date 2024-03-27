@@ -1,5 +1,13 @@
 ignore:
   - "test"
 
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 10%
+
 comment:
   require_changes: true
+
