@@ -48,6 +48,9 @@ namespace ppqsort::impl::cpp {
             }
 
         private:
+            FRIEND_TEST(testThreadPool, PushBusyQueues);
+            FRIEND_TEST(testThreadPool, PopBusyQueues);
+
             std::vector<taskType> stack_;
             std::mutex mutex_;
     };

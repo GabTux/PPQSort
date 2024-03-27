@@ -78,6 +78,9 @@ namespace ppqsort::impl::cpp {
             }
 
         private:
+            FRIEND_TEST(testThreadPool, PushBusyQueues);
+            FRIEND_TEST(testThreadPool, PopBusyQueues);
+
 
             bool get_next_task(const unsigned int id) {
                 bool found = false;
