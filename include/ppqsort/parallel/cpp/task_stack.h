@@ -48,8 +48,10 @@ namespace ppqsort::impl::cpp {
             }
 
         private:
+            #ifdef GTEST_FLAG
             FRIEND_TEST(testThreadPool, PushBusyQueues);
             FRIEND_TEST(testThreadPool, PopBusyQueues);
+            #endif
 
             std::vector<taskType> stack_;
             std::mutex mutex_;
