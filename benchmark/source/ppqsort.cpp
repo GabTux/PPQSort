@@ -11,7 +11,7 @@
 #undef THRUST_HOST_SYSTEM
 #define THRUST_HOST_SYSTEM_TBB
 #include <thrust/sort.h>
-#include <thrust/execution_policy.h>
+#include <thrust/system/omp/execution_policy.h>
 #include <cpp11sort.h>
 #include <mpqsort.h>
 #include <aqsort.h>
@@ -230,6 +230,7 @@ string_benchmark(ppqsort::sort(ppqsort::execution::par_force_branchless, data_.b
 //ppqsort_tuning_partition
 //ppqsort_parameters_tuning
 
+
 // complete sets to compare sorts against each other
 complete_benchmark_set(ppqsort::sort(ppqsort::execution::par, data_.begin(), data_.end()), ppqsort_par, "");
 complete_benchmark_set(__gnu_parallel::sort(data_.begin(), data_.end(), __gnu_parallel::balanced_quicksort_tag()), bqs, "");
@@ -238,7 +239,7 @@ complete_benchmark_set(boost::sort::block_indirect_sort(data_.begin(), data_.end
 complete_benchmark_set(std::sort(std::execution::par, data_.begin(), data_.end()), std_sort_par, "");
 complete_benchmark_set(std::sort(poolstl::par, data_.begin(), data_.end()), poolstl_sort_par, "");
 complete_benchmark_set(tbb::parallel_sort(data_.begin(), data_.end()), tbb_parallel_sort, "");
-complete_benchmark_set(thrust::sort(thrust::host, data_.begin(), data_.end()), thrust_device_sort, "");
+complete_benchmark_set(thrust::sort(thrust::omp::par, data_.begin(), data_.end()), thrust_omp_sort, "");
 //yet buggy: complete_benchmark_set(cpp11sort::sort(data_.begin(), data_.end()), cpp11sort_par);
 complete_benchmark_set_aq(aqsort::sort(data_.size(), &cmp, &sw), aqsort,
     auto sw = [&](std::size_t i, std::size_t j) { std::swap(data_[i], data_[j]); };
