@@ -10,8 +10,6 @@ include(../cmake/tools.cmake)
 
 include(../cmake/CPM.cmake)
 
-CPMAddPackage("gh:TheLartians/Format.cmake@1.8.0")
-
 CPMAddPackage(NAME PPQSort SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 
 # ---- Create standalone executable ----
