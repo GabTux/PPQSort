@@ -39,9 +39,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(PPQSort INTERFACE -Wall -Wpedantic -Wextra -Werror)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wpedantic -Wextra)
   elseif(MSVC)
-    target_compile_options(PPQSort INTERFACE /W4 /WX)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
   endif()
 endif()
 
