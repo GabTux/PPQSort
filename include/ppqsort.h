@@ -59,26 +59,72 @@ namespace ppqsort {
        impl::seq_ppqsort(begin, end);
    }
 
+   /**
+    * @Brief Sorts the elements in the range [begin, end). Will use std::less as comparator and std::thread::hardware_concurrency() as the number of threads.
+    * @tparam ExecutionPolicy
+    * @tparam RandomIt
+    * @param policy Defined execution policy. Use predefined policies from namespace ppqsort::execution.
+    * @param begin Iterator to the first element in the range.
+    * @param end Iterator to the element past the last element in the range.
+    */
    template <typename ExecutionPolicy, typename RandomIt>
    void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end) {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end);
    }
 
+   /**
+    * @brief Sorts the elements in the range [begin, end) utilizing the specified number of threads.
+    * @tparam ExecutionPolicy
+    * @tparam RandomIt
+    * @param policy Defined execution policy. Use predefined policies from namespace ppqsort::execution.
+    * @param begin Iterator to the first element in the range.
+    * @param end Iterator to the element past the last element in the range.
+    * @param threads Number of threads to use for sorting.
+    */
    template <typename ExecutionPolicy, typename RandomIt>
    void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, const int threads) {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, threads);
    }
 
+   /**
+    * @brief Sorts the elements in the range [begin, end) using provided comparator. Will run sequentially.
+    * @tparam RandomIt
+    * @tparam Compare
+    * @param begin Iterator to the first element in the range.
+    * @param end Iterator to the element past the last element in the range.
+    * @param comp Comparator to use for sorting.
+    */
    template <typename RandomIt, typename Compare>
    void sort(RandomIt begin, RandomIt end, Compare comp) {
        impl::seq_ppqsort(begin, end, comp);
    }
 
+   /**
+    * @brief Sorts the elements in the range [begin, end) using provided comparator.
+    * @tparam ExecutionPolicy
+    * @tparam RandomIt
+    * @tparam Compare
+    * @param policy Defined execution policy. Use predefined policies from namespace ppqsort::execution.
+    * @param begin Iterator to the first element in the range.
+    * @param end Iterator to the element past the last element in the range.
+    * @param comp Comparator to use for sorting.
+    */
    template <typename ExecutionPolicy, typename RandomIt, typename Compare>
    void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, Compare comp) {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, comp);
    }
 
+   /**
+    * @brief Sorts the elements in the range [begin, end) using provided comparator and utilizing the specified number of threads.
+    * @tparam ExecutionPolicy
+    * @tparam RandomIt
+    * @tparam Compare
+    * @param policy Defined execution policy. Use predefined policies from namespace ppqsort::execution.
+    * @param begin Iterator to the first element in the range.
+    * @param end Iterator to the element past the last element in the range.
+    * @param comp Comparator to use for sorting.
+    * @param threads Number of threads to use for sorting.
+    */
    template <typename ExecutionPolicy, typename RandomIt, typename Compare>
    void sort(ExecutionPolicy&& policy, RandomIt begin, RandomIt end, Compare comp, const int threads) {
        impl::call_sort(std::forward<ExecutionPolicy>(policy), begin, end, comp, threads);
