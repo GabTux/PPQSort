@@ -44,7 +44,7 @@ namespace ppqsort::impl::cpp {
                 for (auto& thread : threads_)
                     thread.request_stop();
 
-                // wake all potentionally sleeping threads
+                // wake all potentially sleeping threads
                 pending_tasks_.store(1, std::memory_order_release);
                 pending_tasks_.notify_all();
 

@@ -40,7 +40,7 @@ namespace ppqsort::impl::cpp {
         for (int i = 0; i < t_dirty_blocks; ++i) {
             // find clean block in dirty segment
             bool t_reserve_success = false;
-            if (reserved[i].load(std::memory_order_relaxed) == false) {
+            if (!reserved[i].load(std::memory_order_relaxed)) {
                 bool expected = false;
                 t_reserve_success = reserved[i].compare_exchange_strong(expected, true,
                                                                         std::memory_order_relaxed,
@@ -159,7 +159,6 @@ namespace ppqsort::impl::cpp {
         diff_t t_left_end = t_left + block_size - 1;
         diff_t t_right_start = t_right - block_size + 1;
 
-        //diff_t t_size = 0;
         unsigned char t_already_partitioned = 1;
         while (true) {
             // get new blocks if needed or end partitioning

@@ -26,8 +26,8 @@ namespace ppqsort::impl {
     };
 
     template <typename RandomIt, typename Compare>
-    bool is_sorted_par(RandomIt begin, RandomIt end, Compare comp,
-                   const std::size_t size, const int n_threads, bool leftmost, ThreadPool<>& thread_pool) {
+    bool is_sorted_par(RandomIt begin, RandomIt end, Compare comp, const std::size_t size,
+                       const int n_threads, bool leftmost, ThreadPool<>& thread_pool) {
         if (n_threads < 2)
             return leftmost ? partial_insertion_sort(begin, end, comp) : partial_insertion_sort_unguarded(begin, end, comp);
 

@@ -19,6 +19,11 @@ namespace ppqsort::impl::cpp {
                 stack_.reserve(reserved_tasks);
             }
 
+            /**
+             * @brief Try to push a task to the stack.
+             * @param task
+             * @return true if the task was successfully pushed, false otherwise (stack is held by other thread).
+             */
             bool try_push(taskType&& task) {
                 const std::unique_lock lock(mutex_, std::try_to_lock);
                 if (!lock.owns_lock()) return false;
@@ -26,11 +31,19 @@ namespace ppqsort::impl::cpp {
                 return true;
             }
 
+            /**
+             * @brief Push a task to the stack. If the stack is held by another thread, wait until it is released.
+             * @param task
+             */
             void push(taskType&& task) {
                 std::lock_guard lock(mutex_);
                 stack_.emplace_back(task);
             }
 
+            /**
+             * @brief Try to pop a task from the stack.
+             * @return std::nullopt if the stack is empty or held by another thread, task otherwise.
+             */
             std::optional<taskType> try_pop() {
                 const std::unique_lock lock(mutex_, std::try_to_lock);
                 if (!lock.owns_lock() || stack_.empty()) return std::nullopt;
@@ -39,6 +52,10 @@ namespace ppqsort::impl::cpp {
                 return task;
             }
 
+            /**
+             * @brief Pop a task from the stack. If the stack is held by another thread, wait until it is released.
+             * @return std::nullopt if the stack is empty, task otherwise.
+             */
             std::optional<taskType> pop() {
                 std::lock_guard lock(mutex_);
                 if (stack_.empty()) return std::nullopt;
