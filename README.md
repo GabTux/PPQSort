@@ -7,4 +7,8 @@
 
 ## Overview
 
-This repository offers a test and benchmark suite for PPQSort (Parallel Pattern QuickSort). It's used for comparing various sorting algorithms.
+This repository offers a test and benchmark suite for PPQSort (Parallel Pattern QuickSort). These benchmarks were used to evaluate the performance of PPQSort against other parallel sorting algorithms. 
+PPQSort is a parallel Quicksort algorithm which draws inspiration from sequential [pdqsort](https://github.com/orlp/pdqsort) algorithm.
+
+
+For more information about PPQSort, please refer to the [PPQSort repository](https://github.com/GabTux/ppqsort).
