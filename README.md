@@ -10,18 +10,22 @@ Parallel Pattern Quicksort (PPQSort) is a **efficient implementation of parallel
 * **Comprehensive test suite:** Ensures correctness and robustness through extensive testing. 
 * **Benchmarks shows great performance:** Achieves impressive sorting times on various machines.
 
-# Usage
+# Integration
+PPQSort is header only implementation. All the files needed are in include directory.
+
 Add to existing CMake project using [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake):
 ```CMake
 include(cmake/CPM.cmake)
 CPMAddPackage(
 NAME PPQSort
 GITHUB_REPOSITORY GabTux/PPQSort
-VERSION 1.0.1
+VERSION 1.0.1 # change this to latest commit or release tag
 )
-target_link_libraries(${PROJECT_NAME} PPQSort::PPQSort)
+target_link_libraries(YOUR_TARGET PPQSort::PPQSort)
 ```
 Alternatively use FetchContent or just checkout the repository and add the include directory to the linker flags.
+
+# Usage
 
 PPQSort has similiar API as std::sort, you can use `ppqsort::execution::<policy>` policies to specify how the sort should run.
 ```cpp
@@ -41,7 +45,7 @@ ppqsort::sort(ppqsort::execution::par_force_branchless, input_str.begin(), input
 PPQSort will by default use C++ threads, but if you prefer, you can link it with OpenMP and it will use OpenMP as a parallel backend. However you can still enforce C++ threads parallel backend even if linked with OpenMP:
 ```cpp
 #define FORCE_CPP
-#include <ppqsort/ppqsort.h>
+#include <ppqsort.h>
 // ... rest of the code ...
 ```
 
@@ -80,7 +84,7 @@ Results for **INT**, input size was **2e9** (2 billions):
 | Boost       | 8.2s                             | 3.0s                                | 4.26s                                | 13.96s                            | 6.97s                               | 7.92s                          | 44.31s                          | 4                              |
 | IPS$^4$o    | **4.8s**                    | 0.19s                               | 5.97s                                | 5.21s                             | 5.59s                               | **4.91s**                 | 26.67s                          | 2                              |
 
-## Conclusion
+## Summary
 Extended benchmarks (detailed in forthcoming paper) shows that IPS4o (https://github.com/ips4o) often surpasses PPQSort in raw speed. However, IPS4o relies on the external library oneTBB (https://github.com/oneapi-src/oneTBB) introducing integration complexities. PPQSort steps up as a compelling alternative due to its:
 
 * **Competitive Speed:** Delivers performance comparable to IPS4o on most machines.
