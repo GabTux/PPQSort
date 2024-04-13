@@ -82,23 +82,106 @@
         <section id="pub-methods">
           <h2><a href="#pub-methods">Public functions</a></h2>
           <dl class="m-doc">
-            <dt id="a95e1246734e03e8bf03153526cb711f6">
-              <span class="m-doc-wrap-bumper">auto <a href="#a95e1246734e03e8bf03153526cb711f6" class="m-doc-self">try_push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a></span>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a95e1246734e03e8bf03153526cb711f6" class="m-doc">try_push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a></span>
             </dt>
-            <dd><span></span></dd>
-            <dt id="a2ecb98745fd9041ecb843dbfb08c0f60">
-              <span class="m-doc-wrap-bumper">auto <a href="#a2ecb98745fd9041ecb843dbfb08c0f60" class="m-doc-self">push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+            <dd>Try to push a task to the stack.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a2ecb98745fd9041ecb843dbfb08c0f60" class="m-doc">push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
             </dt>
-            <dd><span></span></dd>
-            <dt id="aace034adebabbdcf4ba9093f414276e9">
-              <span class="m-doc-wrap-bumper">auto <a href="#aace034adebabbdcf4ba9093f414276e9" class="m-doc-self">try_pop</a>(</span><span class="m-doc-wrap">) -&gt; std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt;</span>
+            <dd>Push a task to the stack. If the stack is held by another thread, wait until it is released.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#aace034adebabbdcf4ba9093f414276e9" class="m-doc">try_pop</a>(</span><span class="m-doc-wrap">) -&gt; std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt;</span>
             </dt>
-            <dd><span></span></dd>
-            <dt id="a4832f6359c6de3a84c4315d9ba2d376d">
-              <span class="m-doc-wrap-bumper">auto <a href="#a4832f6359c6de3a84c4315d9ba2d376d" class="m-doc-self">pop</a>(</span><span class="m-doc-wrap">) -&gt; std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt;</span>
+            <dd>Try to pop a task from the stack.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a4832f6359c6de3a84c4315d9ba2d376d" class="m-doc">pop</a>(</span><span class="m-doc-wrap">) -&gt; std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt;</span>
             </dt>
-            <dd><span></span></dd>
+            <dd>Pop a task from the stack. If the stack is held by another thread, wait until it is released.</dd>
           </dl>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="a95e1246734e03e8bf03153526cb711f6"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> _1&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr />TaskStack&lt;_1&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a95e1246734e03e8bf03153526cb711f6" class="m-doc-self">try_push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task)</span></span>
+            </h3>
+            <p>Try to push a task to the stack.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">task</td>
+                  <td></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td>true if the task was successfully pushed, false otherwise (stack is held by other thread).</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="a2ecb98745fd9041ecb843dbfb08c0f60"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> _1&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr />TaskStack&lt;_1&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a2ecb98745fd9041ecb843dbfb08c0f60" class="m-doc-self">push</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&amp;&amp; task)</span></span>
+            </h3>
+            <p>Push a task to the stack. If the stack is held by another thread, wait until it is released.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">task</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="aace034adebabbdcf4ba9093f414276e9"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> _1&gt;
+              </div>
+              <span class="m-doc-wrap-bumper">std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr />TaskStack&lt;_1&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aace034adebabbdcf4ba9093f414276e9" class="m-doc-self">try_pop</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Try to pop a task from the stack.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td>std::nullopt if the stack is empty or held by another thread, task otherwise.</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="a4832f6359c6de3a84c4315d9ba2d376d"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> _1&gt;
+              </div>
+              <span class="m-doc-wrap-bumper">std::optional&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a>&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr />TaskStack&lt;_1&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a4832f6359c6de3a84c4315d9ba2d376d" class="m-doc-self">pop</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Pop a task from the stack. If the stack is held by another thread, wait until it is released.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td>std::nullopt if the stack is empty, task otherwise.</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div></section>
         </section>
       </div>
     </div>
