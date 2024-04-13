@@ -195,17 +195,6 @@ public:
     }
 };
 
-
-template <typename T, std::size_t Size>
-concept SizeFit = std::numeric_limits<T>::max() > (Size - 1);
-
-template <typename T = int, std::size_t Size = ELEMENTS_VECTOR_DEFAULT>
-class AdversaryVectorFixture : public VectorFixture<T, Size> {
-    void generate_data() override {
-        // nothing in general, specific to each sort
-    }
-};
-
 template <bool Prepended = true, std::size_t StringSize = STRING_SIZE_DEFAULT,
           std::size_t Size = ELEMENTS_STRING_DEFAULT, int Seed = 0>
 class RandomStringVectorFixture : public VectorFixture<std::string, Size> {

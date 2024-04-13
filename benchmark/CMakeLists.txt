@@ -67,10 +67,11 @@ target_link_libraries(ips4o INTERFACE TBB::tbb atomic)
 set_target_properties(ips4o PROPERTIES CXX_STANDARD 14)
 
 # no release tags, using latest commit hash
+# using our updated fork, original repository is daniel.langr/cpp11sort
 CPMAddPackage(
         NAME cpp11sort
-        GITLAB_REPOSITORY daniel.langr/cpp11sort
-        GIT_TAG 0aa1607cf6906dd201247d864abd80c9cf123872
+        GITLAB_REPOSITORY GabTux/cpp11sort
+        GIT_TAG 1a39462ab86b9231781082c8c70ec78e961a1aac
         DOWNLOAD_ONLY
 )
 include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${cpp11sort_SOURCE_DIR}/include>)
