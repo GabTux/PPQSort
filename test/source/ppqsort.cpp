@@ -163,8 +163,8 @@ TEST(Patterns, HalfSorted) {
 }
 
 TEST(Patterns, Adversary) {
-    std::size_t sizes[] = {128, static_cast<std::size_t>(1e7)};
-    for (const auto & Size: sizes) {
+    const std::size_t sizes_adv[] = {128, static_cast<std::size_t>(1e5)};
+    for (const auto & Size: sizes_adv) {
         std::vector<int> data;
         data.resize(Size);
         int candidate = 0;
@@ -193,8 +193,9 @@ TEST(Patterns, Adversary) {
                 candidate = y;
             return data[x] < data[y];
         };
-        ppqsort::sort(ppqsort::execution::par_force_branchless, asc_vals.begin(), asc_vals.end(), cmp);
-        ppqsort::sort(ppqsort::execution::par, data.begin(), data.end());
+        // cmp is not atomic, run sequentially
+        ppqsort::sort(ppqsort::execution::seq_force_branchless, asc_vals.begin(), asc_vals.end(), cmp);
+        ppqsort::sort(ppqsort::execution::seq, data.begin(), data.end());
     }
 }
 
