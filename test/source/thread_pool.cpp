@@ -94,15 +94,15 @@ namespace ppqsort::impl::cpp {
         pool.threads_queues_[0].mutex_.lock();
         pool.threads_queues_[1].mutex_.lock();
 
-        // simulate busy queues for some time
         std::jthread t1([&](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-            pool.threads_queues_[0].mutex_.unlock();
-            pool.threads_queues_[1].mutex_.unlock();
+            // try to push, should fallback to waiting for the first queue
+            pool.push_task([&](){ ++counter; });
         });
 
-        // try to push, should fallback to waiting for the first queue
-        pool.push_task([&](){ ++counter; });
+        // simulate busy queues for some time
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        pool.threads_queues_[0].mutex_.unlock();
+        pool.threads_queues_[1].mutex_.unlock();
         pool.wait_and_stop();
 
         ASSERT_EQ(counter, 1);
@@ -122,17 +122,18 @@ namespace ppqsort::impl::cpp {
         pool.threads_queues_[0].mutex_.lock();
         pool.threads_queues_[1].mutex_.lock();
 
-        // simulate busy queues for some time
+
         std::jthread t1([&](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-            pool.threads_queues_[0].mutex_.unlock();
-            pool.threads_queues_[1].mutex_.unlock();
+            // push normally to wake up the threads, will wait until mutexes are unlocked
+            pool.push_task([&](){ ++counter; });
         });
 
-        // now push normally to wake up the threads
-        pool.push_task([&](){ ++counter; });
-        pool.wait_and_stop();
+        // simulate busy queues for some time
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        pool.threads_queues_[0].mutex_.unlock();
+        pool.threads_queues_[1].mutex_.unlock();
 
+        pool.wait_and_stop();
         ASSERT_EQ(counter, 3);
     }
 
