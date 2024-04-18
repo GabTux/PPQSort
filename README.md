@@ -1,7 +1,7 @@
 [![Standalone](https://github.com/GabTux/ppqsort_suite/actions/workflows/standalone.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/standalone.yml)
 [![Install](https://github.com/GabTux/ppqsort_suite/actions/workflows/install.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/install.yml)
 [![Tests](https://github.com/GabTux/ppqsort_suite/actions/workflows/tests.yml/badge.svg)](https://github.com/GabTux/ppqsort_suite/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/GabTux/ppqsort_suite/graph/badge.svg?token=K7UVUZ4N1N)](https://codecov.io/gh/GabTux/ppqsort_suite)
+[![codecov](https://codecov.io/github/GabTux/PPQSort/graph/badge.svg?token=K7UVUZ4N1N)](https://codecov.io/github/GabTux/PPQSort)
 
 # PPQSort (Parallel Pattern QuickSort)
 Parallel Pattern Quicksort (PPQSort) is a **efficient implementation of parallel quicksort algorithm**, written by using **only** the C++20 features without using third party libraries (such as Intel TBB). PPQSort draws inspiration from [pdqsort](https://github.com/orlp/pdqsort), [BlockQuicksort](https://github.com/weissan/BlockQuicksort) and [cpp11sort](https://gitlab.com/daniel.langr/cpp11sort) and adds some further optimizations.
