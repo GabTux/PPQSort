@@ -19,7 +19,7 @@ include(cmake/CPM.cmake)
 CPMAddPackage(
 NAME PPQSort
 GITHUB_REPOSITORY GabTux/PPQSort
-VERSION 1.0.1 # change this to latest commit or release tag
+VERSION 1.0.2 # change this to latest commit or release tag
 )
 target_link_libraries(YOUR_TARGET PPQSort::PPQSort)
 ```
