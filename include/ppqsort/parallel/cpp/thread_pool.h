@@ -15,11 +15,11 @@ namespace ppqsort::impl::cpp {
         public:
             ThreadPool(ThreadPool&) = delete;
 
-            explicit ThreadPool(const std::size_t threads_count = std::jthread::hardware_concurrency()) :
+            explicit ThreadPool(const std::size_t threads_count = std::thread::hardware_concurrency()) :
             threads_count_(threads_count), threads_queues_(threads_count) {
                 threads_.reserve(threads_count);
                 for (unsigned int i = 0; i < threads_count; ++i) {
-                    threads_.emplace_back([this, i](const std::stop_token& st) { this->worker(st, i); });
+                    threads_.emplace_back([this, i]() { this->worker(i); });
                 }
             }
 
@@ -41,8 +41,7 @@ namespace ppqsort::impl::cpp {
                         threads_done_semaphore_.acquire();
 
                 // request stops
-                for (auto& thread : threads_)
-                    thread.request_stop();
+                to_stop_ = true;
 
                 // wake all potentially sleeping threads
                 pending_tasks_.store(1, std::memory_order_release);
@@ -112,11 +111,11 @@ namespace ppqsort::impl::cpp {
                 total_tasks_.fetch_sub(1, std::memory_order_release);
             }
 
-            void worker(const std::stop_token& stop_token, const unsigned int id) {
+            void worker(const unsigned int id) {
                 while (true) {
                     // sleep until there are any tasks in queues
                     pending_tasks_.wait(0, std::memory_order_acquire);
-                    if (stop_token.stop_requested())
+                    if (to_stop_)
                         break;
 
                     // while there are tasks, execute them (mine or stolen)
@@ -129,11 +128,12 @@ namespace ppqsort::impl::cpp {
             }
 
             const unsigned int threads_count_;
-            std::vector<std::jthread> threads_;
+            std::vector<std::thread> threads_;
             std::vector<TaskStack<>> threads_queues_;
             alignas(parameters::cacheline_size) std::atomic<std::size_t> index_{0};
             alignas(parameters::cacheline_size) std::atomic<std::size_t> pending_tasks_{0};
             alignas(parameters::cacheline_size) std::atomic<std::size_t> total_tasks_{0};
+            alignas(parameters::cacheline_size) std::atomic<bool> to_stop_{false};
             std::binary_semaphore threads_done_semaphore_{0};   // used to wait for all tasks to finish
             std::mutex mtx_priority_;
             bool stopped = false;
