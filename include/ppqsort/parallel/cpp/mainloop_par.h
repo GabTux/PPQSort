@@ -135,7 +135,7 @@ namespace ppqsort::impl {
              typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>,
              bool Branchless = use_branchless<typename std::iterator_traits<RandomIt>::value_type, Compare>::value>
     void par_ppqsort(RandomIt begin, RandomIt end, Compare comp = Compare(),
-                     int threads = static_cast<int>(std::jthread::hardware_concurrency())) {
+                     int threads = static_cast<int>(std::thread::hardware_concurrency())) {
         if (begin == end)
             return;
         constexpr bool branchless = Force_branchless || Branchless;
