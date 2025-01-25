@@ -41,7 +41,7 @@ namespace ppqsort::impl::cpp {
                         threads_done_semaphore_.acquire();
 
                 // request stops
-                to_stop_ = true;
+                to_stop_.store(true, std::memory_order_release);
 
                 // wake all potentially sleeping threads
                 pending_tasks_.store(1, std::memory_order_release);
@@ -115,7 +115,7 @@ namespace ppqsort::impl::cpp {
                 while (true) {
                     // sleep until there are any tasks in queues
                     pending_tasks_.wait(0, std::memory_order_acquire);
-                    if (to_stop_)
+                    if (to_stop_.load(std::memory_order_acquire))
                         break;
 
                     // while there are tasks, execute them (mine or stolen)
