@@ -10,7 +10,7 @@
 #include <vector>
 #include <fast_matrix_market/fast_matrix_market.hpp>
 
-#define ELEMENTS_VECTOR_DEFAULT std::size_t(2e9)
+#define ELEMENTS_VECTOR_DEFAULT std::size_t(1e9)
 #define ELEMENTS_STRING_DEFAULT std::size_t(2e7)
 #define STRING_SIZE_DEFAULT std::size_t(1001)
 

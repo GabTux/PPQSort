@@ -5,7 +5,7 @@ project(PPQSortBenchmark LANGUAGES CXX)
 include(../cmake/tools.cmake)
 include(../cmake/CPM.cmake)
 
-option(DOWNLOAD_MATRICES "Download and extract matrices (around 26GB)" ON)
+option(DOWNLOAD_MATRICES "Download and extract matrices (around 26GB)" OFF)
 
 if(TEST_INSTALLED_VERSION)
   find_package(PPQsort REQUIRED)
@@ -26,77 +26,77 @@ CPMAddPackage(
         VERSION 1.7.6
 )
 
-CPMAddPackage(
-        NAME Boost
-        VERSION 1.84.0
-        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
-        URL_HASH SHA256=2e64e5d79a738d0fa6fb546c6e5c2bd28f88d268a2a080546f74e5ff98f29d0e
-        OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES sort"
-)
-
-CPMAddPackage(
-        NAME oneTBB
-        GITHUB_REPOSITORY oneapi-src/oneTBB
-        VERSION 2021.12.0-rc2
-        OPTIONS "TBB_TEST OFF" "TBB_STRICT OFF" "TBB_INSTALL OFF" "TBB_DISABLE_HWLOC_AUTOMATIC_SEARCH ON"
-)
-
-CPMAddPackage(
-        NAME poolSTL
-        GITHUB_REPOSITORY alugowski/poolSTL
-        VERSION 0.3.5
-        DOWNLOAD_ONLY
-)
-
-CPMAddPackage(
-        NAME CCCL
-        GITHUB_REPOSITORY NVIDIA/cccl
-        VERSION 2.3.1
-)
+# CPMAddPackage(
+#         NAME Boost
+#         VERSION 1.84.0
+#         URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+#         URL_HASH SHA256=2e64e5d79a738d0fa6fb546c6e5c2bd28f88d268a2a080546f74e5ff98f29d0e
+#         OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES sort"
+# )
+# 
+# CPMAddPackage(
+#         NAME oneTBB
+#         GITHUB_REPOSITORY oneapi-src/oneTBB
+#         VERSION 2021.12.0-rc2
+#         OPTIONS "TBB_TEST OFF" "TBB_STRICT OFF" "TBB_INSTALL OFF" "TBB_DISABLE_HWLOC_AUTOMATIC_SEARCH ON"
+# )
+# 
+# CPMAddPackage(
+#         NAME poolSTL
+#         GITHUB_REPOSITORY alugowski/poolSTL
+#         VERSION 0.3.5
+#         DOWNLOAD_ONLY
+# )
+# 
+# CPMAddPackage(
+#         NAME CCCL
+#         GITHUB_REPOSITORY NVIDIA/cccl
+#         VERSION 2.3.1
+# )
 
 # disable some options now, to just include the library but do not build it
 # we will include the header files and link it properly after
 # no release tags, using latest commit hash
-CPMAddPackage(
-        NAME IPS4o
-        GITHUB_REPOSITORY ips4o/ips4o
-        GIT_TAG d7a74abb47c1913ddc6d6eeca68e59c747ddb693
-        OPTIONS "IPS4O_OPTIMIZE_FOR_NATIVE OFF" "IPS4O_DISABLE_PARALLEL ON" "IPS4O_USE_MCX16 OFF"
-)
-target_link_libraries(ips4o INTERFACE TBB::tbb atomic)
-set_target_properties(ips4o PROPERTIES CXX_STANDARD 14)
-
-# no release tags, using latest commit hash
-# using our updated fork, original repository is daniel.langr/cpp11sort
-CPMAddPackage(
-        NAME cpp11sort
-        GITLAB_REPOSITORY GabTux/cpp11sort
-        GIT_TAG 1a39462ab86b9231781082c8c70ec78e961a1aac
-        DOWNLOAD_ONLY
-)
-include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${cpp11sort_SOURCE_DIR}/include>)
-
-# no release tags, using latest commit hash
-CPMAddPackage(
-        NAME AQsort
-        GITHUB_REPOSITORY DanielLangr/AQsort
-        GIT_TAG 2e73e4854c72b8a7a2065cdf5da3f506eaa79d14
-        DOWNLOAD_ONLY
-)
-include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${AQsort_SOURCE_DIR}/include>)
+# CPMAddPackage(
+#         NAME IPS4o
+#         GITHUB_REPOSITORY ips4o/ips4o
+#         GIT_TAG d7a74abb47c1913ddc6d6eeca68e59c747ddb693
+#         OPTIONS "IPS4O_OPTIMIZE_FOR_NATIVE OFF" "IPS4O_DISABLE_PARALLEL ON" "IPS4O_USE_MCX16 OFF"
+# )
+# target_link_libraries(ips4o INTERFACE TBB::tbb atomic)
+# set_target_properties(ips4o PROPERTIES CXX_STANDARD 14)
+# 
+# # no release tags, using latest commit hash
+# # using our updated fork, original repository is daniel.langr/cpp11sort
+# CPMAddPackage(
+#         NAME cpp11sort
+#         GITLAB_REPOSITORY GabTux/cpp11sort
+#         GIT_TAG 1a39462ab86b9231781082c8c70ec78e961a1aac
+#         DOWNLOAD_ONLY
+# )
+# include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${cpp11sort_SOURCE_DIR}/include>)
+# 
+# # no release tags, using latest commit hash
+# CPMAddPackage(
+#         NAME AQsort
+#         GITHUB_REPOSITORY DanielLangr/AQsort
+#         GIT_TAG 2e73e4854c72b8a7a2065cdf5da3f506eaa79d14
+#         DOWNLOAD_ONLY
+# )
+# include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${AQsort_SOURCE_DIR}/include>)
 
 # MPQsort is single header library, so it is downloaded directly, without cloning whole repository
 # no release tags, using latest commit hash from Jan 27, 2024
-message(STATUS "Adding MPQsort")
-FetchContent_Declare(
-        MPQsort
-        URL https://raw.githubusercontent.com/voronond/MPQsort/eaeda34d19b24fffc04af45e929a1ce769b72a4d/include/mpqsort/mpqsort.h
-        URL_HASH SHA256=ace123ad88808743ac714b116d59c964b45a67170a224d201407ff67bccd8647
-        DOWNLOAD_NO_EXTRACT TRUE
-        DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpqsort
-)
-FetchContent_MakeAvailable(MPQsort)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/mpqsort)
+# message(STATUS "Adding MPQsort")
+# FetchContent_Declare(
+#         MPQsort
+#         URL https://raw.githubusercontent.com/voronond/MPQsort/eaeda34d19b24fffc04af45e929a1ce769b72a4d/include/mpqsort/mpqsort.h
+#         URL_HASH SHA256=ace123ad88808743ac714b116d59c964b45a67170a224d201407ff67bccd8647
+#         DOWNLOAD_NO_EXTRACT TRUE
+#         DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpqsort
+# )
+# FetchContent_MakeAvailable(MPQsort)
+# include_directories(${CMAKE_CURRENT_BINARY_DIR}/mpqsort)
 
 # add openmp
 find_package(OpenMP REQUIRED)
@@ -154,11 +154,12 @@ target_link_libraries(${PROJECT_NAME}
         benchmark::benchmark
         OpenMP::OpenMP_CXX
         fast_matrix_market::fast_matrix_market
-        Boost::sort
-        TBB::tbb
-        poolSTL::poolSTL
-        CCCL::CCCL
-        ips4o
+        #Boost::sort
+        #TBB::tbb
+        #poolSTL::poolSTL
+        #CCCL::CCCL
+        #ips4o
+        papi
         PPQSort::PPQSort)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
