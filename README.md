@@ -92,6 +92,8 @@ Extended benchmarks (detailed in forthcoming paper) shows that IPS4o (https://gi
 * **Dependency-Free:** No external libraries are required, simplifying integration.
 For applications demanding a fast, dependency-free parallel sorting solution, PPQSort is an excellent choice.
 
+PPQSort is also used in [tracy](https://github.com/wolfpld/tracy) project.
+
 # Running Tests and Benchmarks
 Bash script for running or building specific components:
 ```bash
