@@ -110,5 +110,6 @@ Details about the implementation and benchmark results can be found in the follo
   - This is a brief summary poster.
 - [Full master thesis text](https://dspace.cvut.cz/bitstream/handle/10467/114740/F8-DP-2024-Hevr-Gabriel-thesis.pdf?sequence=-1&isAllowed=y)
   - a very detailed text, it also includes additional information not directly related to PPQSort, but related to parallel sorting.
-- An upcoming publication in the [PPAM](https://ppam.edu.pl/) (Parallel Processing & Applied Mathematics) journal.
+- [Conference paper](https://link.springer.com/chapter/10.1007/978-3-031-85697-6_10)
+  - Presented on [PPAM](https://ppam.edu.pl/) (Parallel Processing & Applied Mathematics)
 - Another forthcoming publication in a Concurrency and Computation: Practice and Experience journal.
