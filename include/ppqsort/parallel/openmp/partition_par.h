@@ -9,6 +9,7 @@ namespace ppqsort::impl::openmp {
     template <side s, typename diff_t>
     inline bool get_new_block(diff_t& t_size, diff_t& t_iter, diff_t& t_block_bound,
                               diff_t& g_distance, diff_t& g_offset, const int& block_size) {
+        static_assert(sizeof(diff_t)>4);
         #pragma omp atomic capture
         { t_size = g_distance; g_distance -= block_size; }
         if (t_size < block_size) {
@@ -37,6 +38,7 @@ namespace ppqsort::impl::openmp {
                             const diff_t& t_old, const diff_t& t_block_bound,
                             std::unique_ptr<bool[]>& reserved, const int& block_size)
     {
+        static_assert(sizeof(diff_t)>4);
         diff_t swap_start = -1;
         for (int i = 0; i < g_dirty_blocks_side; ++i) {
             // find clean block in dirty segment
@@ -88,6 +90,7 @@ namespace ppqsort::impl::openmp {
                                   std::unique_ptr<bool[]>& g_reserved_right,
                                   const int& block_size)
     {
+        static_assert(sizeof(diff_t)>4);
         const bool t_dirty_left = t_left <= t_left_end;
         const bool t_dirty_right = t_right >= t_right_start;
 
@@ -152,6 +155,7 @@ namespace ppqsort::impl::openmp {
                                                              const RandomIt& g_end,
                                                              const Compare& comp,
                                                              const int& thread_count) {
+        static_assert(sizeof(diff_t)>4);
         constexpr int block_size = parameters::par_partition_block_size;
         const diff_t g_size = g_end - g_begin;
         diff_t g_distance = g_size - 1;

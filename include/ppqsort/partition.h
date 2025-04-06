@@ -90,6 +90,7 @@ namespace ppqsort::impl {
                                                  const Compare& comp, const diff_t& g_first_offset,
                                                  const diff_t& g_last_offset, bool g_already_partitioned) {
 
+        static_assert(sizeof(diff_t)>4);
 
         RandomIt final_first = g_begin + g_first_offset - 1;
         RandomIt final_last = g_begin + g_last_offset + 1;

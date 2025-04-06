@@ -36,6 +36,7 @@ namespace ppqsort::impl {
                              diff_t bad_allowed, diff_t seq_thr, int threads,
                              bool leftmost = true)
         {
+            static_assert(sizeof(diff_t)>4);
             constexpr int insertion_threshold = branchless ?
                                                 parameters::insertion_threshold_primitive
                                                 : parameters::insertion_threshold;

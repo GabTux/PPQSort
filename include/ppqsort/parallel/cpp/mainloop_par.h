@@ -54,6 +54,7 @@ namespace ppqsort::impl {
                              diff_t bad_allowed, diff_t seq_thr, int threads,
                              ThreadPools& thread_pools,
                              bool leftmost = true) {
+        static_assert(sizeof(diff_t)>4);
             constexpr int insertion_threshold = branchless ?
                                               parameters::insertion_threshold_primitive
                                               : parameters::insertion_threshold;
@@ -141,15 +142,15 @@ namespace ppqsort::impl {
         constexpr bool branchless = Force_branchless || Branchless;
         auto size = end - begin;
         if ((threads < 2) || (size < parameters::seq_threshold))
-            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
+            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, (size_t)log2(size));
 
-        int seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
-        seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
-                                                   : parameters::insertion_threshold);
+        size_t seq_thr = (end - begin + 1) / threads / parameters::par_thr_div;
+        seq_thr = std::max(seq_thr, (size_t)(branchless ? parameters::insertion_threshold_primitive
+                                                   : parameters::insertion_threshold));
         cpp::ThreadPools threadpools(threads);
         threadpools.tasks.push_task([begin, end, comp, seq_thr, threads, &threadpools] {
             cpp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
-                      log2(end - begin),
+                      (size_t)log2(end - begin),
                       seq_thr, threads, threadpools);
         });
         // first we need to wait for recursive tasks, then we can destroy partition threads
