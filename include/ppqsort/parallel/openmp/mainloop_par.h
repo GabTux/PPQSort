@@ -117,25 +117,26 @@ namespace ppqsort::impl {
          bool Branchless = use_branchless<typename std::iterator_traits<RandomIt>::value_type, Compare>::value>
     void par_ppqsort(RandomIt begin, RandomIt end,
                      Compare comp = Compare(), const int threads = omp_get_max_threads()) {
+        using diff_t = typename std::iterator_traits<RandomIt>::difference_type;
         if (begin == end)
             return;
         constexpr bool branchless = Force_branchless || Branchless;
         auto size = end - begin;
         if ((threads < 2) || (size < parameters::seq_threshold))
-            return seq_loop<RandomIt, Compare, branchless>(begin, end, comp, log2(size));
+            return seq_loop<RandomIt, Compare, branchless, diff_t>(begin, end, comp, log2<diff_t>(size));
 
-        int seq_thr = size / threads / parameters::par_thr_div;
-        seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
-                                               : parameters::insertion_threshold);
+        diff_t seq_thr = size / threads / parameters::par_thr_div;
+        seq_thr = std::max(seq_thr, static_cast<diff_t>(branchless ? parameters::insertion_threshold_primitive
+                                                                   : parameters::insertion_threshold));
         omp_set_max_active_levels(2);
         #pragma omp parallel
         {
             #pragma omp single
             {
                 #pragma omp task
-                openmp::par_loop<RandomIt, Compare, branchless>(begin, end, comp,
-                                                                log2(end - begin),
-                                                                seq_thr, threads);
+                openmp::par_loop<RandomIt, Compare, branchless, diff_t>(begin, end, comp,
+                                                                        log2<diff_t>(end - begin),
+                                                                        seq_thr, threads);
             }
         }
     }
