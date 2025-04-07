@@ -68,17 +68,17 @@
           <h2><a href="#nested-classes">Classes</a></h2>
           <dl class="m-doc">
             <dt>
-              <div class="m-doc-template">template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> = std::function&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a>()&gt;&gt;</div>
-              class <a href="classppqsort_1_1impl_1_1cpp_1_1_task_stack.html" class="m-doc">TaskStack</a>
+              <div class="m-doc-template">template&lt;typename taskType = std::function&lt;void()&gt;&gt;</div>
+              class <a href="classppqsort_1_1impl_1_1cpp_1_1TaskStack.html" class="m-doc">TaskStack</a>
             </dt>
             <dd><span></span></dd>
             <dt>
-              <div class="m-doc-template">template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">typename</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">taskType</a> = std::function&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a>()&gt;&gt;</div>
-              class <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>
+              <div class="m-doc-template">template&lt;typename taskType = std::function&lt;void()&gt;&gt;</div>
+              class <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>
             </dt>
             <dd><span></span></dd>
             <dt>
-              struct <a href="structppqsort_1_1impl_1_1cpp_1_1_thread_pools.html" class="m-doc">ThreadPools</a>
+              struct <a href="structppqsort_1_1impl_1_1cpp_1_1ThreadPools.html" class="m-doc">ThreadPools</a>
             </dt>
             <dd><span></span></dd>
           </dl>
@@ -88,187 +88,187 @@
           <dl class="m-doc">
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#abf4f3f263dd1e002d6ba54d52e229c74" class="m-doc">is_sorted_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> std::size_t size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> n_threads,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> leftmost,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a></span>
+              <span class="m-doc-wrap-bumper">auto <a href="#abf4f3f263dd1e002d6ba54d52e229c74" class="m-doc">is_sorted_par</a>(</span><span class="m-doc-wrap">RandomIt begin,
+              RandomIt end,
+              Compare comp,
+              const std::size_t size,
+              const int n_threads,
+              bool leftmost,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; bool</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, bool branchless, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#af137d2d9e134ec225f550f93de88d88a" class="m-doc">par_loop</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a> bad_allowed,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a> seq_thr,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> threads,
-              <a href="structppqsort_1_1impl_1_1cpp_1_1_thread_pools.html" class="m-doc">ThreadPools</a>&amp; thread_pools,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> leftmost = <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">true</a>) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              <span class="m-doc-wrap-bumper">void <a href="#af137d2d9e134ec225f550f93de88d88a" class="m-doc">par_loop</a>(</span><span class="m-doc-wrap">RandomIt begin,
+              RandomIt end,
+              Compare comp,
+              diff_t bad_allowed,
+              diff_t seq_thr,
+              int threads,
+              <a href="structppqsort_1_1impl_1_1cpp_1_1ThreadPools.html" class="m-doc">ThreadPools</a>&amp; thread_pools,
+              bool leftmost = true)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#ac6c8ac64beb494e86cb6fd3f31dc96a5" class="m-doc">process_blocks_branchless</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&gt;&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void <a href="#ac6c8ac64beb494e86cb6fd3f31dc96a5" class="m-doc">process_blocks_branchless</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              std::atomic&lt;unsigned char&gt;&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
-              std::latch&amp; part_done) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int t_my_id,
+              std::latch&amp; part_done)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;class RandomIt, class Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a27baeb7424cd74f0802305fc23a62451" class="m-doc">partition_right_branchless_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> thread_count,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; std::pair&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>, <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;</span>
+              <span class="m-doc-wrap-bumper">auto <a href="#a27baeb7424cd74f0802305fc23a62451" class="m-doc">partition_right_branchless_par</a>(</span><span class="m-doc-wrap">const RandomIt g_begin,
+              const RandomIt g_end,
+              Compare comp,
+              const int thread_count,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; std::pair&lt;RandomIt, bool&gt;</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;side s, typename diff_t&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a3a89e9b13a6e9645a2ca980ec8d747ab" class="m-doc">get_new_block</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_iter,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a></span>
+              <span class="m-doc-wrap-bumper">auto <a href="#a3a89e9b13a6e9645a2ca980ec8d747ab" class="m-doc">get_new_block</a>(</span><span class="m-doc-wrap">diff_t&amp; t_iter,
+              diff_t&amp; t_block_bound,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_offset,
+              const int&amp; block_size) -&gt; bool</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;side s, typename RandomIt, typename diff_t&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a500fff51cb121e40d9d05b2c9b937f89" class="m-doc">swap_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_side,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_old,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; reserved,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              <span class="m-doc-wrap-bumper">void <a href="#a500fff51cb121e40d9d05b2c9b937f89" class="m-doc">swap_blocks</a>(</span><span class="m-doc-wrap">const std::atomic&lt;int&gt;&amp; g_dirty_blocks_side,
+              const RandomIt&amp; g_begin,
+              const diff_t&amp; t_old,
+              const diff_t&amp; t_block_bound,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; reserved,
+              const int&amp; block_size)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename diff_t&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#af68c5ffda25844128f42d7c0ef373881" class="m-doc">swap_dirty_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right_start,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
+              <span class="m-doc-wrap-bumper">void <a href="#af68c5ffda25844128f42d7c0ef373881" class="m-doc">swap_dirty_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const diff_t&amp; t_left,
+              const diff_t&amp; t_right,
+              const diff_t&amp; t_left_end,
+              const diff_t&amp; t_right_start,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
+              const int&amp; block_size,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; t_my_id) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int&amp; t_my_id)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a909fe90c362a5eeb31b415d0949e6ddc" class="m-doc">process_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&gt;&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void <a href="#a909fe90c362a5eeb31b415d0949e6ddc" class="m-doc">process_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              std::atomic&lt;unsigned char&gt;&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
-              std::latch&amp; part_done) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int t_my_id,
+              std::latch&amp; part_done)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a51514af0d896c3a788018374ca14f9f7" class="m-doc">partition_to_right_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> thread_count,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; std::pair&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>, <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;</span>
+              <span class="m-doc-wrap-bumper">auto <a href="#a51514af0d896c3a788018374ca14f9f7" class="m-doc">partition_to_right_par</a>(</span><span class="m-doc-wrap">const RandomIt g_begin,
+              const RandomIt g_end,
+              Compare comp,
+              const int thread_count,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool) -&gt; std::pair&lt;RandomIt, bool&gt;</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#ac26aaa3acc5dd65ce3deac76b2e7e110" class="m-doc">process_blocks_branchless</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_first_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void <a href="#ac26aaa3acc5dd65ce3deac76b2e7e110" class="m-doc">process_blocks_branchless</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              diff_t&amp; g_first_offset,
+              diff_t&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              unsigned char&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
-              std::latch&amp; part_done) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int t_my_id,
+              std::latch&amp; part_done)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;side s, typename diff_t&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#af3072e0c20f40521e12bab58cf44d285" class="m-doc">get_new_block</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_iter,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a></span>
+              <span class="m-doc-wrap-bumper">auto <a href="#af3072e0c20f40521e12bab58cf44d285" class="m-doc">get_new_block</a>(</span><span class="m-doc-wrap">diff_t&amp; t_iter,
+              diff_t&amp; t_block_bound,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic_ref&lt;diff_t&gt;&amp; g_offset,
+              const int&amp; block_size) -&gt; bool</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename diff_t&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a58c2edbe654698e02ac1f325105d419a" class="m-doc">swap_dirty_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right_start,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; a_g_first_offset,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; a_g_last_offset,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
+              <span class="m-doc-wrap-bumper">void <a href="#a58c2edbe654698e02ac1f325105d419a" class="m-doc">swap_dirty_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const diff_t&amp; t_left,
+              const diff_t&amp; t_right,
+              const diff_t&amp; t_left_end,
+              const diff_t&amp; t_right_start,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::atomic_ref&lt;diff_t&gt;&amp; a_g_first_offset,
+              std::atomic_ref&lt;diff_t&gt;&amp; a_g_last_offset,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
+              const int&amp; block_size,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; t_my_id) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int&amp; t_my_id)</span>
             </dt>
             <dd><span></span></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#a478ef84da6d8da731e5e948f047d0ce5" class="m-doc">process_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_first_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void <a href="#a478ef84da6d8da731e5e948f047d0ce5" class="m-doc">process_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              diff_t&amp; g_first_offset,
+              diff_t&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              unsigned char&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
-              std::latch&amp; part_done) -&gt; <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a></span>
+              const int t_my_id,
+              std::latch&amp; part_done)</span>
             </dt>
             <dd><span></span></dd>
           </dl>
@@ -281,13 +281,13 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#abf4f3f263dd1e002d6ba54d52e229c74" class="m-doc-self">is_sorted_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> std::size_t size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> n_threads,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> leftmost,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
+              <span class="m-doc-wrap-bumper">bool ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#abf4f3f263dd1e002d6ba54d52e229c74" class="m-doc-self">is_sorted_par</a>(</span><span class="m-doc-wrap">RandomIt begin,
+              RandomIt end,
+              Compare comp,
+              const std::size_t size,
+              const int n_threads,
+              bool leftmost,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -297,14 +297,14 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, bool branchless, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af137d2d9e134ec225f550f93de88d88a" class="m-doc-self">par_loop</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a> bad_allowed,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a> seq_thr,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> threads,
-              <a href="structppqsort_1_1impl_1_1cpp_1_1_thread_pools.html" class="m-doc">ThreadPools</a>&amp; thread_pools,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> leftmost = <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">true</a>)</span></span>
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af137d2d9e134ec225f550f93de88d88a" class="m-doc-self">par_loop</a>(</span><span class="m-doc-wrap">RandomIt begin,
+              RandomIt end,
+              Compare comp,
+              diff_t bad_allowed,
+              diff_t seq_thr,
+              int threads,
+              <a href="structppqsort_1_1impl_1_1cpp_1_1ThreadPools.html" class="m-doc">ThreadPools</a>&amp; thread_pools,
+              bool leftmost = true)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -314,21 +314,21 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac6c8ac64beb494e86cb6fd3f31dc96a5" class="m-doc-self">process_blocks_branchless</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&gt;&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac6c8ac64beb494e86cb6fd3f31dc96a5" class="m-doc-self">process_blocks_branchless</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              std::atomic&lt;unsigned char&gt;&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
+              const int t_my_id,
               std::latch&amp; part_done)</span></span>
             </h3>
             <p><span></span></p>
@@ -339,11 +339,11 @@
               <div class="m-doc-template">
                 template&lt;class RandomIt, class Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper">std::pair&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>, <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a27baeb7424cd74f0802305fc23a62451" class="m-doc-self">partition_right_branchless_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> thread_count,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
+              <span class="m-doc-wrap-bumper">std::pair&lt;RandomIt, bool&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a27baeb7424cd74f0802305fc23a62451" class="m-doc-self">partition_right_branchless_par</a>(</span><span class="m-doc-wrap">const RandomIt g_begin,
+              const RandomIt g_end,
+              Compare comp,
+              const int thread_count,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -353,11 +353,11 @@
               <div class="m-doc-template">
                 template&lt;side s, typename diff_t&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a3a89e9b13a6e9645a2ca980ec8d747ab" class="m-doc-self">get_new_block</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_iter,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size)</span></span>
+              <span class="m-doc-wrap-bumper">bool ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a3a89e9b13a6e9645a2ca980ec8d747ab" class="m-doc-self">get_new_block</a>(</span><span class="m-doc-wrap">diff_t&amp; t_iter,
+              diff_t&amp; t_block_bound,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_offset,
+              const int&amp; block_size)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -367,12 +367,12 @@
               <div class="m-doc-template">
                 template&lt;side s, typename RandomIt, typename diff_t&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a500fff51cb121e40d9d05b2c9b937f89" class="m-doc-self">swap_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_side,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_old,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; reserved,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size)</span></span>
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a500fff51cb121e40d9d05b2c9b937f89" class="m-doc-self">swap_blocks</a>(</span><span class="m-doc-wrap">const std::atomic&lt;int&gt;&amp; g_dirty_blocks_side,
+              const RandomIt&amp; g_begin,
+              const diff_t&amp; t_old,
+              const diff_t&amp; t_block_bound,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; reserved,
+              const int&amp; block_size)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -382,20 +382,20 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename diff_t&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af68c5ffda25844128f42d7c0ef373881" class="m-doc-self">swap_dirty_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right_start,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af68c5ffda25844128f42d7c0ef373881" class="m-doc-self">swap_dirty_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const diff_t&amp; t_left,
+              const diff_t&amp; t_right,
+              const diff_t&amp; t_left_end,
+              const diff_t&amp; t_right_start,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
+              const int&amp; block_size,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; t_my_id)</span></span>
+              const int&amp; t_my_id)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -405,21 +405,21 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a909fe90c362a5eeb31b415d0949e6ddc" class="m-doc-self">process_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_first_offset,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&gt;&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a909fe90c362a5eeb31b415d0949e6ddc" class="m-doc-self">process_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic&lt;diff_t&gt;&amp; g_first_offset,
+              std::atomic&lt;diff_t&gt;&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              std::atomic&lt;unsigned char&gt;&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
+              const int t_my_id,
               std::latch&amp; part_done)</span></span>
             </h3>
             <p><span></span></p>
@@ -430,11 +430,11 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper">std::pair&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>, <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a51514af0d896c3a788018374ca14f9f7" class="m-doc-self">partition_to_right_par</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a> g_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a> comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> thread_count,
-              <a href="classppqsort_1_1impl_1_1cpp_1_1_thread_pool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
+              <span class="m-doc-wrap-bumper">std::pair&lt;RandomIt, bool&gt; ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a51514af0d896c3a788018374ca14f9f7" class="m-doc-self">partition_to_right_par</a>(</span><span class="m-doc-wrap">const RandomIt g_begin,
+              const RandomIt g_end,
+              Compare comp,
+              const int thread_count,
+              <a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&lt;&gt;&amp; thread_pool)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -444,21 +444,21 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac26aaa3acc5dd65ce3deac76b2e7e110" class="m-doc-self">process_blocks_branchless</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_first_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac26aaa3acc5dd65ce3deac76b2e7e110" class="m-doc-self">process_blocks_branchless</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              diff_t&amp; g_first_offset,
+              diff_t&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              unsigned char&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
+              const int t_my_id,
               std::latch&amp; part_done)</span></span>
             </h3>
             <p><span></span></p>
@@ -469,11 +469,11 @@
               <div class="m-doc-template">
                 template&lt;side s, typename diff_t&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af3072e0c20f40521e12bab58cf44d285" class="m-doc-self">get_new_block</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_iter,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_block_bound,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size)</span></span>
+              <span class="m-doc-wrap-bumper">bool ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af3072e0c20f40521e12bab58cf44d285" class="m-doc-self">get_new_block</a>(</span><span class="m-doc-wrap">diff_t&amp; t_iter,
+              diff_t&amp; t_block_bound,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              std::atomic_ref&lt;diff_t&gt;&amp; g_offset,
+              const int&amp; block_size)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -483,20 +483,20 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename diff_t&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a58c2edbe654698e02ac1f325105d419a" class="m-doc-self">swap_dirty_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_left_end,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; t_right_start,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; a_g_first_offset,
-              std::atomic_ref&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; a_g_last_offset,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a58c2edbe654698e02ac1f325105d419a" class="m-doc-self">swap_dirty_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const diff_t&amp; t_left,
+              const diff_t&amp; t_right,
+              const diff_t&amp; t_left_end,
+              const diff_t&amp; t_right_start,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::atomic_ref&lt;diff_t&gt;&amp; a_g_first_offset,
+              std::atomic_ref&lt;diff_t&gt;&amp; a_g_last_offset,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
+              const int&amp; block_size,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; t_my_id)</span></span>
+              const int&amp; t_my_id)</span></span>
             </h3>
             <p><span></span></p>
           </div></section>
@@ -506,21 +506,21 @@
               <div class="m-doc-template">
                 template&lt;typename RandomIt, typename Compare, typename T = typename std::iterator_traits&lt;RandomIt&gt;::value_type, typename diff_t = typename std::iterator_traits&lt;RandomIt&gt;::difference_type&gt;
               </div>
-              <span class="m-doc-wrap-bumper"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">void</a> ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a478ef84da6d8da731e5e948f047d0ce5" class="m-doc-self">process_blocks</a>(</span><span class="m-doc-wrap"><a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">RandomIt</a>&amp; g_begin,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">Compare</a>&amp; comp,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_size,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&gt;&amp; g_distance,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_first_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">diff_<wbr />t</a>&amp; g_last_offset,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&amp; block_size,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&amp; pivot,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">unsigned</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">char</a>&amp; g_already_partitioned,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_left,
-              std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a>&gt;&amp; g_dirty_blocks_right,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_left,
-              std::unique_ptr&lt;std::atomic&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">bool</a>&gt;[]&gt;&amp; g_reserved_right,
+              <span class="m-doc-wrap-bumper">void ppqsort::<wbr />impl::<wbr />cpp::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a478ef84da6d8da731e5e948f047d0ce5" class="m-doc-self">process_blocks</a>(</span><span class="m-doc-wrap">const RandomIt&amp; g_begin,
+              const Compare&amp; comp,
+              const diff_t&amp; g_size,
+              std::atomic&lt;diff_t&gt;&amp; g_distance,
+              diff_t&amp; g_first_offset,
+              diff_t&amp; g_last_offset,
+              const int&amp; block_size,
+              const T&amp; pivot,
+              unsigned char&amp; g_already_partitioned,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_left,
+              std::atomic&lt;int&gt;&amp; g_dirty_blocks_right,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_left,
+              std::unique_ptr&lt;std::atomic&lt;bool&gt;[]&gt;&amp; g_reserved_right,
               std::barrier&lt;&gt;&amp; barrier,
-              <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">const</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">int</a> t_my_id,
+              const int t_my_id,
               std::latch&amp; part_done)</span></span>
             </h3>
             <p><span></span></p>
@@ -570,7 +570,7 @@
   <div class="m-container">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <p>PPQSort. Created with <a href="https://doxygen.org/">Doxygen</a> 1.10.0 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+        <p>PPQSort. Created with <a href="https://doxygen.org/">Doxygen</a> 1.13.2 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ppqsort::impl::is_default_comparator&lt;std::less&lt;T&gt;&gt; struct | PPQSort</title>
+  <title>ppqsort::impl::cpp::ThreadPool class | PPQSort</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon-dark.png" type="image/png" />
@@ -49,11 +49,53 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
-          <div class="m-doc-include m-code m-inverted m-right-m m-text-right"><span class="cp">#include</span> <a class="cpf" href="mainloop_8h.html">&lt;ppqsort/mainloop.h&gt;</a></div>
-          <div class="m-doc-template">template&lt;<a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">class</a> <a href="namespaceppqsort_1_1impl.html#ac07c3d4f4439e153d38d11553ea780ef" class="m-doc">T</a>&gt;</div>
-          <span class="m-breadcrumb"><a href="namespaceppqsort.html">ppqsort</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespaceppqsort_1_1impl.html">impl</a>::<wbr/></span>is_default_comparator&lt;std::less&lt;T&gt;&gt; <span class="m-thin">struct</span>
+          <div class="m-doc-include m-code m-inverted m-right-m m-text-right"><span class="cp">#include</span> <a class="cpf" href="thread__pool_8h.html">&lt;ppqsort/parallel/cpp/thread_pool.h&gt;</a></div>
+          <div class="m-doc-template">template&lt;typename taskType = std::function&lt;void()&gt;&gt;</div>
+          <span class="m-breadcrumb"><a href="namespaceppqsort.html">ppqsort</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespaceppqsort_1_1impl.html">impl</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespaceppqsort_1_1impl_1_1cpp.html">cpp</a>::<wbr/></span>ThreadPool <span class="m-thin">class</span>
         </h1>
         <p><span></span></p>
+        <nav class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
+          <dl class="m-doc">
+            <dt id="a7437e681ac18a8393da86980338cad00">
+              <span class="m-doc-wrap-bumper"><a href="#a7437e681ac18a8393da86980338cad00" class="m-doc-self">ThreadPool</a>(</span><span class="m-doc-wrap"><a href="classppqsort_1_1impl_1_1cpp_1_1ThreadPool.html" class="m-doc">ThreadPool</a>&amp;) <span class="m-label m-flat m-danger">deleted</span></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7acee399e021e590246e6e0c81a208a1">
+              <span class="m-doc-wrap-bumper"><a href="#a7acee399e021e590246e6e0c81a208a1" class="m-doc-self">ThreadPool</a>(</span><span class="m-doc-wrap">const std::size_t threads_count = std::thread::hardware_concurrency()) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="af07462820eb98d51b0fd4c2c7effc1f7">
+              <span class="m-doc-wrap-bumper"><a href="#af07462820eb98d51b0fd4c2c7effc1f7" class="m-doc-self">~ThreadPool</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="ac214b072294c228739b7cf40401e026a">
+              <span class="m-doc-wrap-bumper">void <a href="#ac214b072294c228739b7cf40401e026a" class="m-doc-self">wait_and_stop</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Wait for all tasks to finish and stop the threads. After this call returns, the thread pool is not usable anymore.</dd>
+            <dt id="ad385667862547383e3bc854690a85e99">
+              <span class="m-doc-wrap-bumper">void <a href="#ad385667862547383e3bc854690a85e99" class="m-doc-self">push_task</a>(</span><span class="m-doc-wrap">taskType&amp;&amp; task)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
       </div>
     </div>
   </div>
@@ -98,7 +140,7 @@
   <div class="m-container">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <p>PPQSort. Created with <a href="https://doxygen.org/">Doxygen</a> 1.10.0 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+        <p>PPQSort. Created with <a href="https://doxygen.org/">Doxygen</a> 1.13.2 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>
