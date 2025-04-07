@@ -8,10 +8,14 @@ on:
 env:
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
 
+permissions:
+  contents: write
+
+
 jobs:
   build:
     name: Build and publish documentation
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -20,18 +24,22 @@ jobs:
           path: "**/cpm_modules"
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
-      - name: Install dependencies
+      - name: Install python dependencies
         run: |
-          brew install doxygen
-          pip3 install jinja2 Pygments
+          pip3 install jinja2==3.1.6 Pygments==2.19.1
 
+      - name: Install Doxygen
+        uses: ssciwr/doxygen-install@v1
+        with:
+            version: "1.13.2"
+      
       - name: Build
         run: |
           cmake -Sdocumentation -Bbuild
           cmake --build build --target GenerateDocs
 
       - name: Publish
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/doxygen/html
