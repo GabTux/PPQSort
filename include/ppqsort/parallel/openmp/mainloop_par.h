@@ -127,7 +127,7 @@ namespace ppqsort::impl {
         seq_thr = std::max(seq_thr, branchless ? parameters::insertion_threshold_primitive
                                                : parameters::insertion_threshold);
         omp_set_max_active_levels(2);
-        #pragma omp parallel
+        #pragma omp parallel num_threads(threads)
         {
             #pragma omp single
             {
