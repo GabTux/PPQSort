@@ -2,6 +2,7 @@
 
 #include <bit>
 #include <execution>
+#include <new>
 
 #ifndef NDEBUG
     #include <bitset>
