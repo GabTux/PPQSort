@@ -1,7 +1,8 @@
 #pragma once
 
 #include <bit>
-#include <execution>
+#include <cstdint>
+#include <limits>
 #include <new>
 
 #ifndef NDEBUG

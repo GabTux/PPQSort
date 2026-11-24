@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>  // std::atomic_ref, and defines __cpp_lib_atomic_ref tested below
+
 // Libc++ does not support atomic_ref yet
 // https://en.cppreference.com/w/cpp/compiler_support#C.2B.2B20_library_features
 #ifdef __cpp_lib_atomic_ref
