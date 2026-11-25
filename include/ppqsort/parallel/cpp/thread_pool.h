@@ -4,7 +4,6 @@
 #include <functional>
 #include <mutex>
 #include <queue>
-#include <semaphore>
 #include <thread>
 
 #include "task_stack.h"
@@ -34,18 +33,18 @@ namespace ppqsort::impl::cpp {
              *        After this call returns, the thread pool is not usable anymore.
              */
             void wait_and_stop() {
-                // the queue can be empty, but any running task can generate new tasks
-                // check if there are any tasks in queue or being executed, if not we can peacefully stop
-                // otherwise, wait for signal
-                // after the last thread is finished, it will signal that all tasks are finished
-                if (total_tasks_.load(std::memory_order_acquire) > 0)
-                        threads_done_semaphore_.acquire();
+                // wait until no task is queued or running
+                // a running task can push new tasks, but it is still counted until it returns,
+                // so total_tasks_ reaches zero only when all the work is done
+                for (auto n = total_tasks_.load(std::memory_order_acquire); n != 0;
+                     n = total_tasks_.load(std::memory_order_acquire))
+                    total_tasks_.wait(n, std::memory_order_acquire);
 
                 // request stops
                 to_stop_.store(true, std::memory_order_release);
 
-                // wake all potentially sleeping threads
-                pending_tasks_.store(1, std::memory_order_release);
+                // wake all sleeping threads
+                pending_tasks_.fetch_add(1, std::memory_order_release);
                 pending_tasks_.notify_all();
 
                 for (auto& thread : threads_)
@@ -109,7 +108,9 @@ namespace ppqsort::impl::cpp {
             void run_task(taskType&& task) {
                 pending_tasks_.fetch_sub(1, std::memory_order_release);
                 task();
-                total_tasks_.fetch_sub(1, std::memory_order_release);
+                // the last task wakes up wait_and_stop()
+                if (total_tasks_.fetch_sub(1, std::memory_order_release) == 1)
+                    total_tasks_.notify_all();
             }
 
             void worker(const unsigned int id) {
@@ -121,10 +122,6 @@ namespace ppqsort::impl::cpp {
 
                     // while there are tasks, execute them (mine or stolen)
                     while (get_next_task(id));
-
-                    // no tasks are in queues or handled --> signal that our work is done
-                    if (total_tasks_.load(std::memory_order_acquire) == 0)
-                        threads_done_semaphore_.release();
                 }
             }
 
@@ -135,9 +132,6 @@ namespace ppqsort::impl::cpp {
             alignas(parameters::cacheline_size) std::atomic<std::size_t> pending_tasks_{0};
             alignas(parameters::cacheline_size) std::atomic<std::size_t> total_tasks_{0};
             alignas(parameters::cacheline_size) std::atomic<bool> to_stop_{false};
-            // counting_semaphore: multiple workers may concurrently observe total_tasks_ == 0
-            // and call release(); a binary_semaphore would assert when the count exceeds 1.
-            std::counting_semaphore<> threads_done_semaphore_{0};
             std::mutex mtx_priority_;
             bool stopped = false;
     };
