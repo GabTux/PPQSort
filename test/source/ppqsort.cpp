@@ -52,8 +52,8 @@ class RandomVectorFixture : public VectorFixture<T> {
                 return;
             T from, to;
             if constexpr (std::is_signed_v<T>) {
-                from = -range / 2;
-                to = range / 2;
+                from = -static_cast<T>(range / 2);
+                to = static_cast<T>(from + static_cast<T>(range));
             } else {
                 from = 0;
                 to = range;
