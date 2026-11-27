@@ -5,7 +5,9 @@
  ****************************************************/
 
 #include <gtest/gtest.h>
+#include <cstdlib>
 #include <future>
+#include <iostream>
 #include "ppqsort/parallel/cpp/thread_pool.h"
 
 namespace ppqsort::impl::cpp {
@@ -134,6 +136,49 @@ namespace ppqsort::impl::cpp {
         pool.threads_queues_[1].mutex_.unlock();
 
         pool.wait_and_stop();
+        ASSERT_EQ(counter, 3);
+    }
+
+    // wait_and_stop() must also wait for tasks pushed after the pool was idle
+    TEST(testThreadPool, WaitAfterIdle) {
+        ThreadPool pool(1);
+        std::atomic<int> counter{0};
+
+        // let the pool run out of work once
+        pool.push_task([&](){ ++counter; });
+        while (counter != 1)
+            std::this_thread::yield();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        // keep the only thread busy, so the next task stays in the queue
+        std::atomic<bool> started{false}, release{false};
+        pool.push_task([&](){
+            started = true;
+            while (!release)
+                std::this_thread::yield();
+            ++counter;
+        });
+        while (!started)
+            std::this_thread::yield();
+        pool.push_task([&](){ ++counter; });
+
+        // abort instead of hanging forever if wait_and_stop() deadlocks
+        std::atomic<bool> stopped{false};
+        std::jthread watchdog([&](){
+            for (int i = 0; i < 1000 && !stopped; ++i)
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            if (!stopped) {
+                std::cerr << "wait_and_stop() deadlocked" << std::endl;
+                std::abort();
+            }
+        });
+
+        std::jthread releaser([&](){
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            release = true;
+        });
+        pool.wait_and_stop();
+        stopped = true;
         ASSERT_EQ(counter, 3);
     }
 
